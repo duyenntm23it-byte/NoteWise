@@ -1,36 +1,61 @@
 window.noteWiseData = {
+  navigation: [
+    { id: "screen-dashboard", label: "Dashboard" },
+    { id: "screen-materials", label: "Tài liệu" },
+    { id: "screen-qa", label: "Document Q&A" },
+    { id: "screen-quiz", label: "Quiz AI" },
+    { id: "screen-analytics", label: "Analytics" },
+    { id: "screen-recommendations", label: "Gợi ý học tập" },
+    { id: "screen-history", label: "Lịch sử" },
+  ],
   documents: [
     {
       id: "discovery",
       title: "Product Discovery",
-      meta: "PDF · 28 trang",
+      meta: "PDF · 28 trang · 2.4 MB",
+      subject: "Product",
       progress: 86,
       color: "violet",
-      updated: "Hôm nay",
       status: "Sẵn sàng",
+      date: "Hôm nay",
     },
     {
       id: "stories",
       title: "User Stories & Specs",
-      meta: "PPTX · 19 slide",
+      meta: "PPTX · 19 slide · 8.1 MB",
+      subject: "Analysis",
       progress: 100,
       color: "teal",
-      updated: "Hôm qua",
       status: "Sẵn sàng",
+      date: "Hôm qua",
     },
     {
       id: "rag",
       title: "RAG Fundamentals",
-      meta: "PDF · 34 trang",
+      meta: "PDF · 34 trang · 4.8 MB",
+      subject: "AI",
       progress: 42,
       color: "orange",
-      updated: "18/09/2026",
       status: "Đang xử lý",
+      date: "18/09/2026",
+    },
+    {
+      id: "trees",
+      title: "Decision Trees",
+      meta: "DOCX · 15 trang · 1.1 MB",
+      subject: "Machine Learning",
+      progress: 0,
+      color: "rose",
+      status: "Thất bại",
+      date: "17/09/2026",
+      error: "Không thể đọc file DOCX.",
     },
   ],
   quizQuestions: [
     {
       question: "Một acceptance criteria tốt cần có đặc điểm nào?",
+      topic: "Acceptance criteria",
+      difficulty: "Dễ",
       options: [
         "Mơ hồ để linh hoạt",
         "Cụ thể và có thể kiểm chứng",
@@ -40,9 +65,12 @@ window.noteWiseData = {
       answer: 1,
       explanation:
         "Acceptance criteria mô tả điều kiện hoàn thành có thể quan sát và kiểm tra.",
+      citation: "Trang 12, Mục 3.2",
     },
     {
       question: "Mục tiêu chính của product discovery là gì?",
+      topic: "Product discovery",
+      difficulty: "Trung bình",
       options: [
         "Viết code thật nhanh",
         "Xác thực vấn đề và nhu cầu người dùng",
@@ -52,9 +80,12 @@ window.noteWiseData = {
       answer: 1,
       explanation:
         "Discovery giúp đội ngũ hiểu và kiểm chứng vấn đề trước khi đầu tư giải pháp.",
+      citation: "Trang 4, Mục 1.1",
     },
     {
       question: "Citation trong câu trả lời AI giúp người học làm gì?",
+      topic: "RAG evaluation",
+      difficulty: "Dễ",
       options: [
         "Trang trí câu trả lời",
         "Kiểm chứng nguồn thông tin",
@@ -64,15 +95,27 @@ window.noteWiseData = {
       answer: 1,
       explanation:
         "Citation dẫn người học về trang hoặc slide gốc để đối chiếu.",
+      citation: "Trang 24, Mục 5.1",
     },
   ],
   weakTopics: [
+    {
+      name: "Decision Trees",
+      score: 42,
+      delta: "-14%",
+      page: "Trang 12-15",
+      tone: "rose",
+      priority: "Ưu tiên cao",
+      reason: "3 lần làm bài gần nhất chỉ đạt trung bình 42%.",
+    },
     {
       name: "Acceptance criteria",
       score: 54,
       delta: "-12%",
       page: "Trang 12",
       tone: "violet",
+      priority: "Ưu tiên cao",
+      reason: "Bạn thường nhầm giữa requirement và điều kiện nghiệm thu.",
     },
     {
       name: "User research methods",
@@ -80,6 +123,8 @@ window.noteWiseData = {
       delta: "-8%",
       page: "Trang 8",
       tone: "orange",
+      priority: "Theo dõi",
+      reason: "Điểm đã tăng nhưng vẫn thấp hơn mục tiêu 70%.",
     },
     {
       name: "RAG evaluation",
@@ -87,6 +132,42 @@ window.noteWiseData = {
       delta: "-5%",
       page: "Trang 24",
       tone: "teal",
+      priority: "Theo dõi",
+      reason: "Còn thiếu dữ liệu ở phần đánh giá citation.",
+    },
+  ],
+  history: [
+    {
+      date: "19/09/2026 · 09:42",
+      activity: "Quiz",
+      document: "Product Discovery",
+      score: "80%",
+      duration: "8 phút",
+      topic: "Acceptance criteria",
+    },
+    {
+      date: "18/09/2026 · 16:10",
+      activity: "Q&A",
+      document: "RAG Fundamentals",
+      score: "—",
+      duration: "12 phút",
+      topic: "RAG evaluation",
+    },
+    {
+      date: "17/09/2026 · 20:05",
+      activity: "Tóm tắt",
+      document: "User Stories & Specs",
+      score: "—",
+      duration: "6 phút",
+      topic: "User stories",
+    },
+    {
+      date: "16/09/2026 · 10:22",
+      activity: "Quiz",
+      document: "Decision Trees",
+      score: "42%",
+      duration: "11 phút",
+      topic: "Decision Trees",
     },
   ],
 };

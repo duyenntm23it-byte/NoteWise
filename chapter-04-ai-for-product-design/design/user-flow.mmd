@@ -1,17 +1,28 @@
 flowchart TD
-    A[Đăng nhập] --> B[Dashboard học tập]
-    B --> C[Tải tài liệu PDF/PPTX]
-    C --> D{AI xử lý tài liệu}
-    D -->|Đang xử lý| E[Hiển thị tiến độ ingest]
-    E --> D
-    D -->|Hoàn tất| F[Xem tài liệu và tóm tắt AI]
-    F --> G[Đặt câu hỏi cho trợ lý Q&A]
-    G --> H[Nhận câu trả lời kèm citation trang/slide]
-    H --> I{Muốn luyện tập?}
-    I -->|Chưa| F
-    I -->|Có| J[Tạo Quiz AI]
-    J --> K[Làm quiz tương tác]
-    K --> L[Xem điểm và giải thích đáp án]
-    L --> M[Xem Analytics chủ đề yếu]
-    M --> N[Ôn lại trang liên quan hoặc tạo quiz ngắn]
-    N --> G
+    A[Đăng nhập / Đăng ký] -->|Xác thực thành công| B[Dashboard tổng quan]
+    A -->|Chưa đăng nhập| A1[Thông báo bảo mật và nút Đăng nhập]
+    B --> C[Kho tài liệu của tôi]
+    C --> C1[Tải PDF / DOCX / PPTX]
+    C1 --> C2{AI xử lý tài liệu}
+    C2 -->|Đang tải / đang xử lý| C3[Progress và skeleton]
+    C3 --> C2
+    C2 -->|Sẵn sàng| D[Xem tài liệu]
+    C2 -->|Thất bại| C4[Inline error + Thử lại]
+    C4 --> C2
+    D --> E[Tài liệu gốc hoặc Tóm tắt AI]
+    E --> F[Document Q&A]
+    F --> G[Câu trả lời kèm citation]
+    G -->|Bấm citation| E1[Highlight trang / đoạn nguồn]
+    G -->|Không đủ nguồn| G1[Cảnh báo không thể trả lời chính xác]
+    B --> H[Tạo Quiz AI]
+    H --> H1[Setup modal: nguồn, số câu, dạng, độ khó]
+    H1 --> H2[Skeleton AI tạo quiz]
+    H2 --> I[Quiz Player]
+    I --> J[Kết quả: điểm, đúng/sai, giải thích, citation]
+    J --> K[Analytics & Chủ đề yếu]
+    K --> L[Gợi ý bài học cá nhân hóa]
+    L -->|Mở trang nguồn| E
+    L -->|Quiz ôn tập 5 câu| H
+    B --> M[Lịch sử học tập]
+    M --> M1[Filter và mở chi tiết phiên học]
+    J --> M

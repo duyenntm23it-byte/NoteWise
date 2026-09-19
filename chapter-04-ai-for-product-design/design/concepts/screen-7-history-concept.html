@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>NoteWise Learning History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { ink: "#20243a", violet: "#4f46b5", canvas: "#f7f7fb" },
+            fontFamily: { sans: ["Be Vietnam Pro", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="min-h-screen bg-canvas font-sans text-ink">
+    <main class="mx-auto max-w-6xl p-6 lg:p-10">
+      <header class="flex items-center justify-between">
+        <div class="flex items-center gap-3 font-bold">
+          <span
+            class="grid h-9 w-9 place-items-center rounded-xl bg-violet text-white"
+            >N</span
+          >NoteWise
+        </div>
+        <span
+          class="grid h-9 w-9 place-items-center rounded-full bg-violet/15 text-xs font-bold text-violet"
+          >AT</span
+        >
+      </header>
+      <section class="mt-12">
+        <p class="text-xs font-bold uppercase tracking-widest text-violet">
+          Learning History
+        </p>
+        <h1 class="mt-2 text-3xl font-bold">Lịch sử học tập</h1>
+        <p class="mt-2 text-sm text-slate-500">
+          Xem lại các phiên học, điểm số và nguồn đã dùng.
+        </p>
+        <div class="mt-7 flex flex-wrap gap-2">
+          <select
+            class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm"
+          >
+            <option>30 ngày qua</option></select
+          ><select
+            class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm"
+          >
+            <option>Tất cả tài liệu</option></select
+          ><select
+            class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm"
+          >
+            <option>Tất cả hoạt động</option></select
+          ><select
+            class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm"
+          >
+            <option>Mọi điểm số</option>
+          </select>
+        </div>
+        <div
+          class="mt-5 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm"
+        >
+          <div class="min-w-[700px]">
+            <div
+              class="grid grid-cols-6 gap-3 border-b border-slate-200 px-5 py-4 text-xs font-bold uppercase text-slate-400"
+            >
+              <span>Thời gian</span><span>Hoạt động</span><span>Tài liệu</span
+              ><span>Điểm</span><span>Thời lượng</span><span>Chủ đề</span>
+            </div>
+            <button
+              class="grid w-full grid-cols-6 gap-3 border-b border-slate-100 px-5 py-4 text-left text-sm hover:bg-violet-50"
+            >
+              <span class="text-xs text-slate-500">19/09 · 09:42</span
+              ><span
+                class="w-max rounded bg-violet-50 px-2 py-1 text-xs font-bold text-violet-700"
+                >Quiz</span
+              ><span>Product Discovery</span><b>80%</b
+              ><span class="text-slate-500">8 phút</span
+              ><span class="text-slate-500">Acceptance criteria</span></button
+            ><button
+              class="grid w-full grid-cols-6 gap-3 border-b border-slate-100 px-5 py-4 text-left text-sm hover:bg-violet-50"
+            >
+              <span class="text-xs text-slate-500">18/09 · 16:10</span
+              ><span
+                class="w-max rounded bg-teal-50 px-2 py-1 text-xs font-bold text-teal-700"
+                >Q&A</span
+              ><span>RAG Fundamentals</span><b>—</b
+              ><span class="text-slate-500">12 phút</span
+              ><span class="text-slate-500">RAG evaluation</span></button
+            ><button
+              class="grid w-full grid-cols-6 gap-3 px-5 py-4 text-left text-sm hover:bg-violet-50"
+            >
+              <span class="text-xs text-slate-500">16/09 · 10:22</span
+              ><span
+                class="w-max rounded bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700"
+                >Quiz</span
+              ><span>Decision Trees</span><b class="text-rose-600">42%</b
+              ><span class="text-slate-500">11 phút</span
+              ><span class="text-slate-500">Decision Trees</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

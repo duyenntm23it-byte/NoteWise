@@ -1,36 +1,32 @@
-# Prompt: NoteWise UI Design System
+# Prompt: Thiết kế toàn diện UI/UX NoteWise
 
-Bạn là product designer đang thiết kế hệ thống giao diện cho NoteWise, một web app học tập cá nhân hóa từ tài liệu PDF/PPTX. Hãy đề xuất một UI design system có thể triển khai cho web responsive, ưu tiên tính rõ ràng, tập trung và khả năng kiểm chứng câu trả lời AI.
+Bạn là Chuyên gia UI/UX và Kiến trúc sư Frontend. Hãy thiết kế giao diện toàn diện cho NoteWise, hệ thống học tập cá nhân hóa dựa trên tài liệu bài giảng sinh viên tải lên.
 
-## Yêu cầu thị giác
+## Triết lý
 
-- Dùng bảng màu chủ đạo **Indigo/Purple** nhưng tiết chế, có màu trung tính sáng cho canvas đọc tài liệu và màu trạng thái riêng cho success, warning, error.
-- Đề xuất màu nền, surface, border, text primary/secondary, accent, success, warning và error kèm mã hex và mục đích sử dụng.
-- Font chữ sans-serif hiện đại, dễ đọc tiếng Việt; dùng một font cho UI và có thể dùng font monospace cho metadata/citation.
-- Xác định scale typography, spacing, radius, shadow, icon style và quy tắc focus state.
-- Không dùng gradient nặng, card lồng trong card hoặc trang trí làm giảm khả năng đọc.
+- Tóm tắt, quiz, analytics và recommendation phải gắn với nguồn tài liệu gốc.
+- Không gian học sạch, tập trung, phù hợp sinh viên đại học và người tự học.
+- Hiển thị rõ xử lý AI, loading, empty, ready, error/retry và confirmation dialog.
+- Khi nguồn không đủ, AI phải nói rõ không thể trả lời chính xác, tuyệt đối không bịa.
+
+## Global layout
+
+Thiết kế sidebar có thể thu gọn với Logo/NoteWise, Dashboard, My Materials, Document Q&A, Quiz, Analytics & Weak Topics, Recommendations, Learning History; phía dưới có Profile, Settings, Logout. Top header gồm breadcrumb, global document selector, notification, AI processing status và user avatar. Main canvas hỗ trợ grid, card, split-screen và modal; responsive trên desktop/mobile.
 
 ## Bảy màn hình bắt buộc
 
-1. **Dashboard tổng quan học tập.**
-2. **Danh sách và upload tài liệu.**
-3. **Màn hình đọc tài liệu chia đôi với trợ lý Q&A.**
-4. **Trình tạo Quiz AI và giao diện làm bài.**
-5. **Analytics chủ đề yếu.**
-6. **Trang chi tiết/tóm tắt tài liệu.**
-7. **Cài đặt tài khoản và tùy chọn học tập.**
+1. **Auth:** card căn giữa, tab Đăng nhập/Đăng ký, Email, Mật khẩu, xác thực mật khẩu, inline error, show/hide password, loading button, protected-route security error.
+2. **Materials:** upload button, search, subject/tag/status filters, grid/list toggle, drag-drop PDF/DOCX/PPTX, file limit, upload-processing-ready/failed progress, retry, quick menu và delete confirmation.
+3. **Document Q&A:** 60/40 split, document selector, tabs tài liệu gốc/tóm tắt AI, bullets/formula/chips, chat, prompt, answer, page/section citation click để highlight, insufficient-evidence warning.
+4. **Quiz:** setup modal với source, 5-20 questions, type, difficulty, optional topic, AI skeleton; player với progress/timer/document, topic/difficulty, options, previous/skip/submit/next; result score/time/correct-wrong, review, explanation/citation và actions.
+5. **Analytics:** accuracy over time, completed quizzes, mastered documents, topic mastery bars/matrix, weak cards dưới 60%, priority reason, quick actions.
+6. **Recommendations:** tiêu đề “Hành động học tập được đề xuất cho bạn”, context tag, explanation, source pages, open slide/5-question quiz CTAs và insufficient-data banner.
+7. **Learning History:** filters time/document/activity/score/weak topic, table/timeline, clickable detail row and review drawer.
 
-Với mỗi màn hình, mô tả mục tiêu, primary action, cấu trúc layout, thành phần chính và responsive behavior. Sidebar cần có điều hướng tới Dashboard, Tài liệu, Quiz, Analytics và Cài đặt; top header có breadcrumb, tìm kiếm hoặc trạng thái phiên học.
+## Design tokens
 
-## Trạng thái cần thiết
-
-Mô tả component và copy cho bốn trạng thái của các màn hình dữ liệu:
-
-- **Loading:** skeleton hoặc progress có giải thích ngắn, không gây hiểu nhầm rằng AI đã hoàn tất.
-- **Empty:** hướng dẫn hành động đầu tiên, ví dụ chưa có tài liệu hoặc chưa có kết quả quiz.
-- **Error:** thông báo nguyên nhân có thể hiểu, nút thử lại và bảo toàn dữ liệu người dùng.
-- **Ready:** nội dung hoàn chỉnh, timestamp/trạng thái xử lý và hành động tiếp theo.
+Dùng Indigo `#4F46B5` làm primary, Purple `#7C5CFC` cho AI, Electric Teal `#0F9F95`, Mint success, Amber warning, Rose error, warm off-white canvas và Ink text. Dùng Be Vietnam Pro hoặc Inter; spacing 4/8/12/16/24/32/48px; radius 8/12/16px; subtle shadow; WCAG AA contrast; visible keyboard focus.
 
 ## Đầu ra
 
-Trả về tài liệu design system có token rõ ràng, component inventory, guideline accessibility và ví dụ microcopy bằng tiếng Việt. Giữ giao diện mang cảm giác học tập hiện đại, yên tĩnh và đáng tin cậy; không biến sản phẩm thành dashboard phân tích doanh nghiệp nặng nề.
+Trả về wireframe layout, component inventory, token table, interaction states và microcopy tiếng Việt cho cả bảy màn hình. Tạo HTML/Tailwind single-file concepts có thể mở trực tiếp và một prototype HTML/CSS/JS thuần mô phỏng các luồng chính.

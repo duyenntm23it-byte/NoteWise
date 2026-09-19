@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>NoteWise Materials</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { ink: "#20243a", violet: "#4f46b5", canvas: "#f7f7fb" },
+            fontFamily: { sans: ["Be Vietnam Pro", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="min-h-screen bg-canvas font-sans text-ink">
+    <main class="mx-auto max-w-6xl p-6 lg:p-10">
+      <header class="flex items-center justify-between">
+        <div class="flex items-center gap-3 font-bold">
+          <span
+            class="grid h-9 w-9 place-items-center rounded-xl bg-violet text-white"
+            >N</span
+          >NoteWise
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-semibold text-emerald-700"
+            >● AI sẵn sàng</span
+          ><span
+            class="grid h-9 w-9 place-items-center rounded-full bg-violet/15 text-xs font-bold text-violet"
+            >AT</span
+          >
+        </div>
+      </header>
+      <section class="mt-12">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-violet">
+              My Materials
+            </p>
+            <h1 class="mt-2 text-3xl font-bold">Kho tài liệu của tôi</h1>
+            <p class="mt-2 text-sm text-slate-500">
+              Tài liệu là nguồn duy nhất cho các hoạt động AI.
+            </p>
+          </div>
+          <button
+            class="rounded-lg bg-violet px-4 py-3 text-sm font-bold text-white"
+          >
+            ＋ Tải lên tài liệu
+          </button>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-2">
+          <input
+            class="min-w-64 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm"
+            placeholder="⌕ Tìm tài liệu..."
+          /><select
+            class="rounded-lg border border-slate-200 bg-white px-3 text-sm"
+          >
+            <option>Tất cả môn học</option></select
+          ><select
+            class="rounded-lg border border-slate-200 bg-white px-3 text-sm"
+          >
+            <option>Tất cả trạng thái</option></select
+          ><button class="rounded-lg border border-slate-200 bg-white px-3">
+            ▦
+          </button>
+        </div>
+        <div
+          class="mt-5 grid place-items-center gap-2 rounded-2xl border-2 border-dashed border-violet/30 bg-white p-8 text-center"
+        >
+          <strong class="text-violet">⌁ Kéo thả tài liệu vào đây</strong
+          ><span class="text-xs text-slate-500"
+            >PDF, DOCX, PPTX · tối đa 25 MB</span
+          ><button
+            class="mt-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold"
+          >
+            Chọn file
+          </button>
+        </div>
+        <div class="mt-5 grid gap-3">
+          <article
+            class="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+          >
+            <span
+              class="grid h-11 w-11 place-items-center rounded-lg bg-violet text-xs font-bold text-white"
+              >PDF</span
+            >
+            <div class="min-w-48 flex-1">
+              <strong class="block text-sm">Product Discovery</strong
+              ><small class="text-xs text-slate-500"
+                >PDF · 28 trang · 2.4 MB · Hôm nay</small
+              >
+            </div>
+            <span
+              class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700"
+              >Sẵn sàng</span
+            ><span class="text-xs text-slate-500">86%</span
+            ><button class="text-slate-400">•••</button>
+          </article>
+          <article
+            class="flex flex-wrap items-center gap-4 rounded-xl border border-rose-200 bg-white p-4 shadow-sm"
+          >
+            <span
+              class="grid h-11 w-11 place-items-center rounded-lg bg-rose-500 text-xs font-bold text-white"
+              >DOC</span
+            >
+            <div class="min-w-48 flex-1">
+              <strong class="block text-sm">Decision Trees</strong
+              ><small class="text-xs text-slate-500"
+                >DOCX · 15 trang · 1.1 MB · 17/09/2026</small
+              >
+            </div>
+            <span
+              class="rounded-full bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700"
+              >Thất bại</span
+            ><button
+              class="rounded-lg bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700"
+            >
+              Thử lại</button
+            ><button class="text-slate-400">•••</button>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

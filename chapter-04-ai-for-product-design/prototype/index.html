@@ -14,14 +14,20 @@
         </div>
         <div class="nav-label">Workspace</div>
         <nav class="nav-list" aria-label="Điều hướng">
-          <button class="nav-item active" data-view="dashboard">
+          <button class="nav-item active" data-screen="screen-dashboard">
             <span class="nav-icon">⌂</span><span>Dashboard</span></button
-          ><button class="nav-item" data-view="documents">
+          ><button class="nav-item" data-screen="screen-materials">
             <span class="nav-icon">▤</span><span>Tài liệu</span></button
-          ><button class="nav-item" data-view="quiz">
+          ><button class="nav-item" data-screen="screen-qa">
+            <span class="nav-icon">?</span><span>Document Q&A</span></button
+          ><button class="nav-item" data-screen="screen-quiz">
             <span class="nav-icon">✓</span><span>Quiz AI</span></button
-          ><button class="nav-item" data-view="analytics">
-            <span class="nav-icon">◒</span><span>Analytics</span>
+          ><button class="nav-item" data-screen="screen-analytics">
+            <span class="nav-icon">◒</span><span>Analytics</span></button
+          ><button class="nav-item" data-screen="screen-recommendations">
+            <span class="nav-icon">✦</span><span>Gợi ý học tập</span></button
+          ><button class="nav-item" data-screen="screen-history">
+            <span class="nav-icon">◷</span><span>Lịch sử</span>
           </button>
         </nav>
         <div class="sidebar-bottom">
@@ -36,14 +42,21 @@
             Workspace / <b id="breadcrumb-title">Dashboard</b>
           </div>
           <div class="top-actions">
-            <label class="search"
-              >⌕ <input type="search" placeholder="Tìm tài liệu..." /></label
-            ><span class="subtle">Thứ 7, 19/09</span>
+            <label class="document-selector"
+              >Tài liệu:
+              <select id="global-document">
+                <option>Product Discovery</option>
+                <option>RAG Fundamentals</option>
+              </select></label
+            ><span class="ai-status">● AI sẵn sàng</span
+            ><label class="search"
+              >⌕ <input type="search" placeholder="Tìm tài liệu..."
+            /></label>
             <div class="avatar">AT</div>
           </div>
         </header>
         <main class="page">
-          <section class="view active" id="dashboard">
+          <section id="screen-dashboard" class="screen-content block">
             <div class="page-heading">
               <div>
                 <p class="eyebrow">Chào buổi sáng, An</p>
@@ -52,7 +65,7 @@
                   Bạn còn 2 phiên học để hoàn thành mục tiêu tuần này.
                 </p>
               </div>
-              <button class="primary-btn" data-action="upload">
+              <button class="primary-btn" data-screen="screen-materials">
                 ＋ Tải tài liệu
               </button>
             </div>
@@ -70,7 +83,7 @@
                 ><span class="trend">↑ 6% tiến bộ</span>
               </article>
               <article class="stat-card">
-                <small>Chủ đề cần ôn</small><strong>3</strong
+                <small>Chủ đề cần ôn</small><strong>2</strong
                 ><span class="trend" style="color: var(--orange)"
                   >Ưu tiên hôm nay</span
                 >
@@ -80,7 +93,7 @@
               <article class="panel">
                 <div class="panel-heading">
                   <h2>Tài liệu gần đây</h2>
-                  <button class="panel-link" data-view-link="documents">
+                  <button class="panel-link" data-screen="screen-materials">
                     Xem tất cả →
                   </button>
                 </div>
@@ -89,67 +102,238 @@
               <article class="panel">
                 <div class="panel-heading">
                   <h2>Chủ đề cần củng cố</h2>
-                  <button class="panel-link" data-view-link="analytics">
+                  <button class="panel-link" data-screen="screen-analytics">
                     Chi tiết →
                   </button>
                 </div>
                 <div class="weak-list" id="dashboard-topics"></div>
                 <div class="recommendation">
-                  <b>Gợi ý cho bạn</b>Bắt đầu quiz 5 câu về Acceptance criteria
-                  để cải thiện điểm số.
+                  <b>Gợi ý cho bạn</b>Ôn Decision Trees qua Trang 12-15 và làm
+                  quiz 5 câu.
                 </div>
               </article>
             </div>
           </section>
-          <section class="view" id="documents">
+          <section id="auth-panel" class="auth-panel hidden">
+            <div class="auth-screen">
+              <div class="auth-card">
+                <div class="brand auth-brand">
+                  <span class="brand-mark">N</span><span>NoteWise</span>
+                </div>
+                <p class="eyebrow">Không gian học tập cá nhân</p>
+                <h1 id="auth-title">Chào mừng trở lại</h1>
+                <p class="subtle">Đăng nhập để tiếp tục tiến độ học của bạn.</p>
+                <div class="auth-tabs">
+                  <button class="auth-tab active" data-auth-mode="login">
+                    Đăng nhập</button
+                  ><button class="auth-tab" data-auth-mode="register">
+                    Đăng ký
+                  </button>
+                </div>
+                <form id="auth-form">
+                  <label
+                    >Email<input
+                      id="auth-email"
+                      type="email"
+                      placeholder="ban@example.com" /><span
+                      class="field-error"
+                      id="email-error"
+                    ></span></label
+                  ><label
+                    >Mật khẩu
+                    <div class="password-field">
+                      <input
+                        id="auth-password"
+                        type="password"
+                        placeholder="••••••••"
+                      /><button type="button" data-toggle-password>Hiện</button>
+                    </div>
+                    <span class="field-error" id="password-error"></span></label
+                  ><label class="register-only" hidden
+                    >Xác thực mật khẩu<input
+                      id="auth-confirm"
+                      type="password"
+                      placeholder="Nhập lại mật khẩu" /></label
+                  ><button class="primary-btn auth-submit" type="submit">
+                    Đăng nhập
+                  </button>
+                </form>
+                <p class="security-note">
+                  ⌾ Dữ liệu học tập của bạn được bảo vệ. Chưa đăng nhập sẽ không
+                  thể truy cập tài liệu riêng tư.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="screen-materials" class="screen-content hidden">
             <div class="page-heading">
               <div>
-                <p class="eyebrow">Library</p>
-                <h1>Tài liệu của bạn</h1>
-                <p class="subtle">Tất cả nội dung đã nạp vào không gian học.</p>
+                <p class="eyebrow">My Materials</p>
+                <h1>Kho tài liệu của tôi</h1>
+                <p class="subtle">
+                  Tải lên tài liệu để NoteWise biến chúng thành trải nghiệm học
+                  tập.
+                </p>
               </div>
               <button class="primary-btn" data-action="upload">
-                ＋ Tải tài liệu
+                ＋ Tải lên tài liệu
               </button>
+            </div>
+            <div class="toolbar">
+              <label class="search"
+                >⌕
+                <input
+                  id="material-search"
+                  placeholder="Tìm theo tên tài liệu..." /></label
+              ><select>
+                <option>Tất cả môn học</option>
+                <option>Product</option>
+                <option>AI</option></select
+              ><select>
+                <option>Tất cả trạng thái</option>
+                <option>Sẵn sàng</option>
+                <option>Đang xử lý</option>
+                <option>Thất bại</option>
+              </select>
+              <div class="view-toggle">
+                <button class="active">▦</button><button>☷</button>
+              </div>
+            </div>
+            <div class="upload-zone" id="upload-zone">
+              <strong>⌁ Kéo thả tài liệu vào đây</strong
+              ><span>hoặc chọn file PDF, DOCX, PPTX · tối đa 25 MB</span
+              ><button class="ghost-btn" data-action="upload">Chọn file</button>
             </div>
             <article class="panel">
               <div class="panel-heading">
-                <h2>3 tài liệu</h2>
+                <h2 id="materials-count">4 tài liệu</h2>
                 <span class="subtle">Cập nhật gần nhất</span>
               </div>
               <div class="document-list" id="all-documents"></div>
-              <div class="empty-state" id="upload-message" hidden>
-                <strong>Tài liệu đang được chuẩn bị</strong>AI sẽ thông báo khi
-                quá trình xử lý hoàn tất.
-              </div>
             </article>
           </section>
-          <section class="view" id="quiz">
+          <section id="screen-qa" class="screen-content hidden">
+            <div class="split-layout">
+              <section class="reader-panel">
+                <div class="reader-toolbar">
+                  <select>
+                    <option>Product Discovery · Chương 3</option>
+                    <option>RAG Fundamentals · Chương 2</option>
+                  </select>
+                  <div class="tab-switch">
+                    <button class="active" data-reader-tab="source">
+                      Tài liệu gốc</button
+                    ><button data-reader-tab="summary">Tóm tắt AI</button>
+                  </div>
+                </div>
+                <article id="source-content">
+                  <p class="subtle">Trang 12 / 28 · Requirements Analysis</p>
+                  <h1>Requirements Analysis</h1>
+                  <p class="lead">
+                    Requirements analysis biến nhu cầu của người dùng thành các
+                    yêu cầu có thể kiểm chứng.
+                  </p>
+                  <p>
+                    Nhóm sản phẩm tổng hợp dữ liệu từ phỏng vấn, quan sát và
+                    phản hồi để nhận diện vấn đề thực sự. Một yêu cầu tốt mô tả
+                    kết quả cần đạt, không áp đặt sớm giải pháp kỹ thuật.
+                  </p>
+                  <blockquote id="citation-highlight">
+                    “The best requirements are testable, traceable, and
+                    connected to a user outcome.”<small
+                      >Trang 12 · Mục 3.2</small
+                    >
+                  </blockquote>
+                  <p>
+                    Acceptance criteria giúp đội ngũ thống nhất thế nào là hoàn
+                    thành. Chúng nên cụ thể, quan sát được và đủ ngắn để dùng
+                    trong review hoặc usability test.
+                  </p>
+                </article>
+                <article id="summary-content" hidden>
+                  <p class="eyebrow">AI summary</p>
+                  <h1>3 ý chính cần nhớ</h1>
+                  <ul class="summary-list">
+                    <li>Requirements mô tả kết quả sản phẩm cần đáp ứng.</li>
+                    <li>
+                      Acceptance criteria là điều kiện hoàn thành có thể kiểm
+                      thử.
+                    </li>
+                    <li>
+                      Mọi yêu cầu nên traceable về insight của người dùng.
+                    </li>
+                  </ul>
+                  <div class="concept-chips">
+                    <span>Requirements</span><span>Acceptance criteria</span
+                    ><span>Traceability</span>
+                  </div>
+                </article>
+              </section>
+              <aside class="qa-panel">
+                <div class="panel-heading">
+                  <div>
+                    <p class="eyebrow">Trợ lý tài liệu</p>
+                    <h2>Hỏi về bài giảng</h2>
+                  </div>
+                  <span class="ai-status">● Ready</span>
+                </div>
+                <div class="chat-messages">
+                  <div class="chat-user">
+                    Acceptance criteria khác gì với requirements?
+                  </div>
+                  <div class="chat-ai">
+                    <p>
+                      Requirements mô tả điều sản phẩm cần đáp ứng. Acceptance
+                      criteria cụ thể hóa điều kiện để xác nhận requirement đã
+                      hoàn thành và có thể kiểm thử.
+                    </p>
+                    <button class="citation" data-highlight>
+                      [Trích dẫn: Trang 12, Mục 3.2] ↗
+                    </button>
+                  </div>
+                  <div class="insufficient">
+                    ⓘ Không chắc câu trả lời? NoteWise chỉ trả lời dựa trên nội
+                    dung tài liệu đã nạp.
+                  </div>
+                </div>
+                <form class="chat-composer">
+                  <textarea
+                    placeholder="Hỏi bất kỳ điều gì về bài giảng này..."
+                  ></textarea
+                  ><button class="primary-btn">Gửi →</button>
+                </form>
+              </aside>
+            </div>
+          </section>
+          <section id="screen-quiz" class="screen-content hidden">
             <div class="page-heading">
               <div>
-                <p class="eyebrow">Practice mode</p>
-                <h1>Quiz AI</h1>
-                <p class="subtle">
-                  Luyện tập có chủ đích từ những gì bạn đã học.
-                </p>
+                <p class="eyebrow">Quiz Generator & Player</p>
+                <h1>Luyện tập cùng AI</h1>
+                <p class="subtle">Tạo bài luyện tập từ tài liệu đang học.</p>
               </div>
-              <button class="primary-btn" data-action="new-quiz">
-                ＋ Tạo quiz mới
+              <button class="primary-btn" data-action="quiz-setup">
+                ＋ Tạo bài luyện tập
               </button>
             </div>
             <div class="quiz-layout">
               <article class="panel">
                 <div class="panel-heading">
-                  <h2 id="quiz-topic">Requirements Analysis</h2>
+                  <h2 id="quiz-topic">Acceptance criteria</h2>
                   <span class="subtle" id="quiz-progress">Câu 1 / 3</span>
                 </div>
                 <div class="progress-line">
                   <span id="quiz-progress-bar" style="width: 33%"></span>
                 </div>
+                <div class="quiz-meta">
+                  <span>Product Discovery</span
+                  ><span class="difficulty">Dễ</span>
+                </div>
                 <h2 class="quiz-question" id="quiz-question"></h2>
                 <div class="options" id="quiz-options"></div>
                 <div class="quiz-footer">
-                  <span class="quiz-status" id="quiz-feedback"
+                  <button class="ghost-btn">← Câu trước</button
+                  ><span class="quiz-status" id="quiz-feedback"
                     >Chọn một đáp án để tiếp tục.</span
                   ><button class="primary-btn" id="next-question" disabled>
                     Câu tiếp theo →
@@ -161,72 +345,245 @@
                 <div class="score-ring" id="quiz-score">0%</div>
                 <h2>Giữ nhịp học đều</h2>
                 <p class="subtle">
-                  Mỗi câu hỏi có giải thích và nguồn để bạn xem lại.
+                  Mỗi câu có giải thích và nguồn để bạn xem lại.
                 </p>
               </aside>
             </div>
+            <article class="panel quiz-result hidden" id="quiz-result">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Quiz complete</p>
+                  <h2>Kết quả bài luyện tập</h2>
+                </div>
+                <span class="status-badge ready">Đã lưu</span>
+              </div>
+              <div class="result-grid">
+                <strong id="result-score">0%</strong
+                ><span
+                  ><b id="result-correct">0/3</b><small>Câu đúng</small></span
+                ><span><b>8 phút</b><small>Thời gian</small></span>
+              </div>
+              <p class="subtle">
+                AI đã lưu giải thích và citation cho từng câu trả lời.
+              </p>
+              <div>
+                <button class="ghost-btn" data-action="retry-quiz">
+                  Làm lại bài này</button
+                ><button class="primary-btn" data-screen="screen-analytics">
+                  Xem chủ đề yếu
+                </button>
+              </div>
+            </article>
           </section>
-          <section class="view" id="analytics">
+          <section id="screen-analytics" class="screen-content hidden">
             <div class="page-heading">
               <div>
-                <p class="eyebrow">Your learning signal</p>
-                <h1>Analytics học tập</h1>
+                <p class="eyebrow">Analytics & Weak Topics</p>
+                <h1>Nhìn thấy cách bạn tiến bộ</h1>
                 <p class="subtle">
-                  Những nơi bạn có thể dành thêm một chút thời gian.
+                  Dữ liệu biến thành một hành động học cụ thể.
                 </p>
               </div>
-              <button class="ghost-btn" data-action="export">
-                ↓ Xuất báo cáo
-              </button>
+              <button class="ghost-btn">↓ Xuất báo cáo</button>
+            </div>
+            <div class="stats-grid">
+              <article class="stat-card">
+                <small>Accuracy tổng thể</small><strong>78%</strong
+                ><span class="trend">↑ 6% trong 30 ngày</span>
+              </article>
+              <article class="stat-card">
+                <small>Quiz đã hoàn thành</small><strong>12</strong
+                ><span class="trend">↑ 3 bài</span>
+              </article>
+              <article class="stat-card">
+                <small>Tài liệu đã làm chủ</small><strong>4</strong
+                ><span class="trend">2 tài liệu đang học</span>
+              </article>
+              <article class="stat-card">
+                <small>Chủ đề dưới 60%</small><strong>2</strong
+                ><span class="trend" style="color: var(--orange)"
+                  >Cần chú ý</span
+                >
+              </article>
             </div>
             <div class="content-grid">
               <article class="panel">
                 <div class="panel-heading">
-                  <h2>Chủ đề yếu cần ưu tiên</h2>
-                  <span class="subtle">30 ngày qua</span>
+                  <h2>Độ chính xác theo thời gian</h2>
+                  <span class="subtle">4 tuần gần nhất</span>
+                </div>
+                <div class="chart">
+                  <div class="chart-line"></div>
+                  <span>Tuần 1</span><span>Tuần 2</span><span>Tuần 3</span
+                  ><span>Tuần 4</span>
+                </div>
+                <div class="panel-heading topics-heading">
+                  <h2>Mức độ thành thạo chủ đề</h2>
                 </div>
                 <div class="weak-list" id="analytics-topics"></div>
               </article>
               <article class="panel">
-                <div class="panel-heading"><h2>Đề xuất tiếp theo</h2></div>
-                <div class="recommendation">
-                  <b>1. Ôn Acceptance criteria</b>Đọc lại Trang 12 trong tài
-                  liệu Product Discovery.
+                <div class="panel-heading"><h2>Chủ đề yếu cần chú ý</h2></div>
+                <div id="priority-topics"></div>
+              </article>
+            </div>
+          </section>
+          <section id="screen-recommendations" class="screen-content hidden">
+            <div class="page-heading">
+              <div>
+                <p class="eyebrow">Recommendation engine</p>
+                <h1>Hành động học tập được đề xuất cho bạn</h1>
+                <p class="subtle">
+                  Các bước tiếp theo dựa trên kết quả học và nguồn tài liệu.
+                </p>
+              </div>
+            </div>
+            <div class="data-limited">
+              ✦ Hãy hoàn thành thêm các bài quiz để AI có đủ dữ liệu đưa ra gợi
+              ý chính xác hơn.
+            </div>
+            <div class="recommendation-grid">
+              <article class="recommendation-card">
+                <span class="context-tag"
+                  >Dựa trên chủ đề yếu: Decision Trees</span
+                >
+                <h2>Ôn lại cắt tỉa cây quyết định</h2>
+                <p>
+                  Bạn thường trả lời sai các câu hỏi về cắt tỉa cây quyết định.
+                  Đọc lại Trang 12-15 và làm bài kiểm tra nhanh 5 câu.
+                </p>
+                <small>Nguồn: Decision Trees · Trang 12-15</small>
+                <div>
+                  <button class="ghost-btn">Mở Slide bài giảng</button
+                  ><button class="primary-btn" data-screen="screen-quiz">
+                    Quiz 5 câu →
+                  </button>
                 </div>
-                <div class="recommendation">
-                  <b>2. Làm quiz ngắn</b>5 câu hỏi tập trung vào User research
-                  methods.
-                </div>
-                <div class="recommendation">
-                  <b>3. Hỏi trợ lý AI</b>“Giải thích RAG evaluation bằng một ví
-                  dụ.”
+              </article>
+              <article class="recommendation-card">
+                <span class="context-tag teal-tag"
+                  >Dựa trên tiến độ: RAG evaluation</span
+                >
+                <h2>Đọc lại phần citation và đánh giá</h2>
+                <p>
+                  Điểm của bạn đã tăng 5%. Một phiên Q&A ngắn sẽ giúp củng cố
+                  cách kiểm chứng nguồn.
+                </p>
+                <small>Nguồn: RAG Fundamentals · Trang 24</small>
+                <div>
+                  <button class="ghost-btn" data-screen="screen-qa">
+                    Mở tài liệu</button
+                  ><button class="primary-btn" data-screen="screen-quiz">
+                    Bắt đầu học →
+                  </button>
                 </div>
               </article>
             </div>
           </section>
+          <section id="screen-history" class="screen-content hidden">
+            <div class="page-heading">
+              <div>
+                <p class="eyebrow">Learning History</p>
+                <h1>Lịch sử học tập</h1>
+                <p class="subtle">
+                  Xem lại các phiên học, điểm số và nguồn đã dùng.
+                </p>
+              </div>
+            </div>
+            <div class="toolbar">
+              <select>
+                <option>30 ngày qua</option>
+                <option>7 ngày qua</option>
+                <option>Tất cả thời gian</option></select
+              ><select>
+                <option>Tất cả tài liệu</option>
+                <option>Product Discovery</option>
+                <option>Decision Trees</option></select
+              ><select>
+                <option>Tất cả hoạt động</option>
+                <option>Quiz</option>
+                <option>Q&A</option>
+                <option>Tóm tắt</option></select
+              ><select>
+                <option>Mọi điểm số</option>
+                <option>Dưới 60%</option>
+              </select>
+            </div>
+            <article class="panel history-panel">
+              <div class="history-table" id="history-table"></div>
+              <div class="empty-state" id="history-empty" hidden>
+                <strong>Chưa có lịch sử học tập</strong
+                ><button class="primary-btn" data-screen="screen-materials">
+                  Bắt đầu học
+                </button>
+              </div>
+            </article>
+          </section>
         </main>
       </div>
     </div>
+    <dialog id="delete-dialog">
+      <div class="dialog-icon">!</div>
+      <h2>Xóa tài liệu?</h2>
+      <p>
+        Tài liệu và lịch sử Q&A liên quan sẽ bị xóa. Hành động này không thể
+        hoàn tác.
+      </p>
+      <div>
+        <button class="ghost-btn" data-close-dialog>Hủy</button
+        ><button class="danger-btn" data-close-dialog>Xóa tài liệu</button>
+      </div>
+    </dialog>
+    <dialog id="quiz-dialog">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">AI Quiz Generator</p>
+          <h2>Tạo bài luyện tập</h2>
+        </div>
+        <button class="dialog-close" data-close-dialog>×</button>
+      </div>
+      <label
+        >Tài liệu nguồn<select>
+          <option>Product Discovery</option>
+          <option>Decision Trees</option>
+        </select></label
+      ><label>Số câu hỏi<input type="range" min="5" max="20" value="5" /></label
+      ><label
+        >Dạng câu hỏi<select>
+          <option>Trắc nghiệm</option>
+          <option>Đúng/Sai</option>
+          <option>Điền từ</option>
+        </select></label
+      ><label
+        >Độ khó<select>
+          <option>Dễ</option>
+          <option>Trung bình</option>
+          <option>Khó</option>
+        </select></label
+      ><label
+        >Chủ đề cụ thể <span class="subtle">(Tùy chọn)</span
+        ><input placeholder="Ví dụ: cắt tỉa cây" /></label
+      ><button class="primary-btn" data-close-dialog data-screen="screen-quiz">
+        Bắt đầu Quiz →
+      </button>
+    </dialog>
     <script src="mock-data.js"></script>
-    <script>
+    <script type="application/disabled">
       const data = window.noteWiseData;
-      let currentQuestion = 0;
-      let score = 0;
-      const $ = (selector) => document.querySelector(selector);
-      function documentMarkup(doc) {
-        return `<div class="document"><div class="doc-icon ${doc.color}">${doc.meta.startsWith("PDF") ? "PDF" : "PPT"}</div><div class="doc-info"><strong>${doc.title}</strong><small>${doc.meta} · ${doc.status}</small></div><div class="doc-progress"><small>${doc.progress}%</small><div class="progress-line"><span style="width:${doc.progress}%"></span></div></div><button class="doc-open" aria-label="Mở ${doc.title}" data-action="open">↗</button></div>`;
-      }
-      function topicMarkup(topic) {
-        return `<div class="weak-item"><span class="weak-name">${topic.name}</span><span class="weak-score">${topic.delta}</span><div class="progress-line"><span style="width:${topic.score}%;background:var(--${topic.tone})"></span></div><span class="weak-page">${topic.page} · Điểm hiện tại ${topic.score}%</span></div>`;
-      }
-      function renderLists() {
+      let questionIndex = 0,
+        score = 0;
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => [...document.querySelectorAll(s)];
+      const docMarkup = (d) =>
+        `<div class="document"><div class="doc-icon ${d.color}">${d.meta.startsWith("PDF") ? "PDF" : d.meta.startsWith("PPT") ? "PPT" : "DOC"}</div><div class="doc-info"><strong>${d.title}</strong><small>${d.meta} · ${d.subject} · ${d.date}</small></div><span class="status-badge ${d.status === "Sẵn sàng" ? "ready" : d.status === "Thất bại" ? "failed" : "processing"}">${d.status}</span><div class="doc-progress"><small>${d.progress}%</small><div class="progress-line"><span style="width:${d.progress}%"></span></div></div><button class="doc-open" aria-label="Mở ${d.title}" data-action="open">↗</button>${d.status === "Thất bại" ? '<button class="retry-btn" data-action="retry">Thử lại</button>' : ""}<button class="doc-menu" data-action="delete">•••</button></div>`;
+      const topicMarkup = (t) =>
+        `<div class="weak-item"><span class="weak-name">${t.name}</span><span class="weak-score">${t.delta}</span><div class="progress-line"><span style="width:${t.score}%;background:var(--${t.tone})"></span></div><span class="weak-page">${t.page} · ${t.score}% · ${t.priority}</span></div>`;
+      function render() {
         $("#dashboard-documents").innerHTML = data.documents
-          .slice(0, 2)
-          .map(documentMarkup)
+          .slice(0, 3)
+          .map(docMarkup)
           .join("");
-        $("#all-documents").innerHTML = data.documents
-          .map(documentMarkup)
-          .join("");
+        $("#all-documents").innerHTML = data.documents.map(docMarkup).join("");
         $("#dashboard-topics").innerHTML = data.weakTopics
           .slice(0, 3)
           .map(topicMarkup)
@@ -234,94 +591,177 @@
         $("#analytics-topics").innerHTML = data.weakTopics
           .map(topicMarkup)
           .join("");
+        $("#priority-topics").innerHTML = data.weakTopics
+          .filter((t) => t.score < 60)
+          .map(
+            (t) =>
+              `<div class="priority-card"><span class="status-badge failed">${t.priority}</span><strong>${t.name}</strong><p>${t.reason}</p><button class="ghost-btn" data-view="quiz">Tạo Quiz ôn tập</button><button class="panel-link">Đọc ${t.page} →</button></div>`,
+          )
+          .join("");
+        $("#history-table").innerHTML =
+          `<div class="history-row history-head"><span>Thời gian</span><span>Hoạt động</span><span>Tài liệu</span><span>Điểm</span><span>Thời lượng</span><span>Chủ đề</span></div>` +
+          data.history
+            .map(
+              (h) =>
+                `<button class="history-row" data-action="history-detail"><span>${h.date}</span><span class="activity-tag">${h.activity}</span><span>${h.document}</span><strong>${h.score}</strong><span>${h.duration}</span><span>${h.topic}</span></button>`,
+            )
+            .join("");
       }
       function showView(id) {
-        document
-          .querySelectorAll(".view")
-          .forEach((view) => view.classList.toggle("active", view.id === id));
-        document
-          .querySelectorAll(".nav-item")
-          .forEach((item) =>
-            item.classList.toggle("active", item.dataset.view === id),
-          );
-        $("#breadcrumb-title").textContent = {
-          dashboard: "Dashboard",
-          documents: "Tài liệu",
-          quiz: "Quiz AI",
-          analytics: "Analytics",
-        }[id];
+        $$(".view").forEach((v) => v.classList.toggle("active", v.id === id));
+        $$(".nav-item").forEach((n) =>
+          n.classList.toggle("active", n.dataset.view === id),
+        );
+        $("#breadcrumb-title").textContent =
+          {
+            auth: "Xác thực",
+            dashboard: "Dashboard",
+            materials: "Tài liệu",
+            qa: "Document Q&A",
+            quiz: "Quiz AI",
+            analytics: "Analytics",
+            recommendations: "Gợi ý học tập",
+            history: "Lịch sử",
+          }[id] || "Dashboard";
         if (id === "quiz") renderQuestion();
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
       function renderQuestion() {
-        const item = data.quizQuestions[currentQuestion];
-        $("#quiz-question").textContent = item.question;
+        const q = data.quizQuestions[questionIndex];
+        $("#quiz-topic").textContent = q.topic;
+        $("#quiz-question").textContent = q.question;
         $("#quiz-progress").textContent =
-          `Câu ${currentQuestion + 1} / ${data.quizQuestions.length}`;
+          `Câu ${questionIndex + 1} / ${data.quizQuestions.length}`;
         $("#quiz-progress-bar").style.width =
-          `${((currentQuestion + 1) / data.quizQuestions.length) * 100}%`;
-        $("#quiz-options").innerHTML = item.options
+          `${((questionIndex + 1) / data.quizQuestions.length) * 100}%`;
+        $("#quiz-options").innerHTML = q.options
           .map(
-            (option, index) =>
-              `<button class="option" data-index="${index}"><b>${String.fromCharCode(65 + index)}</b> ${option}</button>`,
+            (o, i) =>
+              `<button class="option" data-index="${i}"><b>${String.fromCharCode(65 + i)}</b> ${o}</button>`,
           )
           .join("");
         $("#quiz-feedback").textContent = "Chọn một đáp án để tiếp tục.";
         $("#next-question").disabled = true;
       }
-      document.addEventListener("click", (event) => {
-        const nav = event.target.closest("[data-view], [data-view-link]");
-        if (nav) showView(nav.dataset.view || nav.dataset.viewLink);
-        const action = event.target.closest("[data-action]");
-        if (action?.dataset.action === "upload") {
-          $("#upload-message").hidden = false;
-          showView("documents");
+      document.addEventListener("click", (e) => {
+        const target = e.target.closest("[data-view]");
+        if (target) showView(target.dataset.view);
+        const action = e.target.closest("[data-action]")?.dataset.action;
+        if (action === "upload") {
+          $("#upload-zone").classList.add("uploading");
+          setTimeout(
+            () => $("#upload-zone").classList.remove("uploading"),
+            900,
+          );
         }
-        if (action?.dataset.action === "new-quiz") {
-          currentQuestion = 0;
-          score = 0;
-          showView("quiz");
+        if (action === "delete") $("#delete-dialog").showModal();
+        if (action === "retry")
+          e.target
+            .closest(".document")
+            .querySelector(".status-badge").textContent = "Đang xử lý";
+        if (action === "open") showView("qa");
+        if (action === "quiz-setup") $("#quiz-dialog").showModal();
+        if (action === "history-detail")
+          alert("Chi tiết phiên học đã được mở.");
+        if (e.target.closest("[data-close-dialog]")) {
+          e.target.closest("dialog").close();
+          if (e.target.closest("[data-view]"))
+            showView(e.target.closest("[data-view]").dataset.view);
         }
-        if (action?.dataset.action === "open") showView("quiz");
-        const option = event.target.closest(".option");
+        if (e.target.closest("[data-highlight]")) {
+          $("#citation-highlight").classList.add("highlighted");
+          setTimeout(
+            () => $("#citation-highlight").classList.remove("highlighted"),
+            1800,
+          );
+        }
+        const option = e.target.closest(".option");
         if (option) {
-          document
-            .querySelectorAll(".option")
-            .forEach((item) => item.classList.remove("selected"));
+          $$(".option").forEach((o) => o.classList.remove("selected"));
           option.classList.add("selected");
           $("#next-question").disabled = false;
           $("#quiz-feedback").textContent =
             Number(option.dataset.index) ===
-            data.quizQuestions[currentQuestion].answer
+            data.quizQuestions[questionIndex].answer
               ? "Chính xác. Bạn có thể đi tiếp."
               : "Chưa đúng. Xem giải thích sau khi hoàn thành.";
         }
         if (
-          event.target.closest("#next-question") &&
-          !event.target.closest("#next-question").disabled
+          e.target.closest("#next-question") &&
+          !e.target.closest("#next-question").disabled
         ) {
-          const selected = document.querySelector(".option.selected");
           if (
-            Number(selected.dataset.index) ===
-            data.quizQuestions[currentQuestion].answer
+            Number($(".option.selected").dataset.index) ===
+            data.quizQuestions[questionIndex].answer
           )
-            score += 1;
-          if (currentQuestion < data.quizQuestions.length - 1) {
-            currentQuestion += 1;
+            score++;
+          if (questionIndex < data.quizQuestions.length - 1) {
+            questionIndex++;
             renderQuestion();
           } else {
-            $("#quiz-question").textContent = "Bạn đã hoàn thành phiên quiz.";
+            $("#quiz-question").textContent =
+              `Bạn hoàn thành ${score}/${data.quizQuestions.length} câu`;
             $("#quiz-options").innerHTML =
-              `<div class="recommendation"><b>Kết quả: ${score}/${data.quizQuestions.length}</b>${score === data.quizQuestions.length ? "Xuất sắc. Kiến thức đã rất chắc." : "Hãy mở lại citation của từng câu để củng cố phần còn thiếu."}</div>`;
-            $("#quiz-feedback").textContent = "Phiên học đã lưu.";
-            $("#next-question").disabled = true;
+              `<div class="recommendation"><b>Kết quả đã lưu</b>${score === data.quizQuestions.length ? "Xuất sắc." : "Hãy xem lại citation của các câu sai."}</div>`;
             $("#quiz-score").textContent =
               `${Math.round((score / data.quizQuestions.length) * 100)}%`;
+            $("#next-question").disabled = true;
           }
         }
       });
-      renderLists();
+      document.addEventListener("click", (e) => {
+        const tab = e.target.closest("[data-reader-tab]");
+        if (tab) {
+          $$("[data-reader-tab]").forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          $("#source-content").hidden = tab.dataset.readerTab !== "source";
+          $("#summary-content").hidden = tab.dataset.readerTab !== "summary";
+        }
+        const auth = e.target.closest("[data-auth-mode]");
+        if (auth) {
+          const register = auth.dataset.authMode === "register";
+          $$(".auth-tab").forEach((t) =>
+            t.classList.toggle("active", t === auth),
+          );
+          $$(".register-only").forEach((el) => (el.hidden = !register));
+          $("#auth-title").textContent = register
+            ? "Tạo tài khoản mới"
+            : "Chào mừng trở lại";
+          $(".auth-submit").textContent = register
+            ? "Tạo tài khoản"
+            : "Đăng nhập";
+        }
+      });
+      $("#auth-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        $("#email-error").textContent = $("#auth-email").value.includes("@")
+          ? ""
+          : "Email chưa hợp lệ.";
+        $("#password-error").textContent =
+          $("#auth-password").value.length >= 6
+            ? ""
+            : "Mật khẩu cần ít nhất 6 ký tự.";
+        if (!$("#email-error").textContent && !$("#password-error").textContent)
+          showView("dashboard");
+      });
+      $$("[data-toggle-password]").forEach((b) =>
+        b.addEventListener("click", () => {
+          const i = $("#auth-password");
+          i.type = i.type === "password" ? "text" : "password";
+          b.textContent = i.type === "password" ? "Hiện" : "Ẩn";
+        }),
+      );
+      $("#material-search").addEventListener("input", (e) => {
+        $$(".document").forEach(
+          (row) =>
+            (row.hidden = !row.textContent
+              .toLowerCase()
+              .includes(e.target.value.toLowerCase())),
+        );
+      });
+      render();
       renderQuestion();
     </script>
+    <script src="script.js"></script>
   </body>
 </html>

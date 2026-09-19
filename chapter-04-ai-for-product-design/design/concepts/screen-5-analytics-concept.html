@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>NoteWise Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { ink: "#20243a", violet: "#4f46b5", canvas: "#f7f7fb" },
+            fontFamily: { sans: ["Be Vietnam Pro", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="min-h-screen bg-canvas font-sans text-ink">
+    <main class="mx-auto max-w-6xl p-6 lg:p-10">
+      <header class="flex items-center justify-between">
+        <div class="flex items-center gap-3 font-bold">
+          <span
+            class="grid h-9 w-9 place-items-center rounded-xl bg-violet text-white"
+            >N</span
+          >NoteWise
+        </div>
+        <span class="text-sm text-slate-500">Analytics / 30 ngày qua</span>
+      </header>
+      <section class="mt-12">
+        <p class="text-xs font-bold uppercase tracking-widest text-violet">
+          Analytics & Weak Topics
+        </p>
+        <h1 class="mt-2 text-3xl font-bold">Nhìn thấy cách bạn tiến bộ</h1>
+        <div class="mt-8 grid gap-4 sm:grid-cols-3">
+          <article
+            class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
+            <small class="text-xs text-slate-500">Accuracy tổng thể</small
+            ><strong class="mt-3 block text-3xl">78%</strong
+            ><span class="text-xs font-bold text-emerald-700"
+              >↑ 6% trong 30 ngày</span
+            >
+          </article>
+          <article
+            class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
+            <small class="text-xs text-slate-500">Quiz hoàn thành</small
+            ><strong class="mt-3 block text-3xl">12</strong
+            ><span class="text-xs text-slate-500">3 bài mới</span>
+          </article>
+          <article
+            class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
+            <small class="text-xs text-slate-500">Tài liệu đã làm chủ</small
+            ><strong class="mt-3 block text-3xl">4</strong
+            ><span class="text-xs text-slate-500">2 tài liệu đang học</span>
+          </article>
+        </div>
+        <div class="mt-5 grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
+          <article
+            class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+          >
+            <div class="flex justify-between">
+              <h2 class="font-bold">Mức độ chính xác</h2>
+              <span class="text-xs text-slate-500">4 tuần gần nhất</span>
+            </div>
+            <div
+              class="mt-8 h-36 border-b border-slate-200 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_32px,#f0f0f5_33px)]"
+            >
+              <div
+                class="relative top-16 h-12 rounded-full border-t-4 border-violet-600 [transform:skewY(-8deg)]"
+              ></div>
+            </div>
+            <div class="mt-3 flex justify-between text-xs text-slate-400">
+              <span>Tuần 1</span><span>Tuần 2</span><span>Tuần 3</span
+              ><span>Tuần 4</span>
+            </div>
+          </article>
+          <article
+            class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+          >
+            <h2 class="font-bold">Chủ đề yếu cần chú ý</h2>
+            <div class="mt-5 space-y-5">
+              <div>
+                <div class="flex justify-between text-sm">
+                  <b>Decision Trees</b><span class="text-rose-600">42%</span>
+                </div>
+                <div class="mt-2 h-2 rounded bg-slate-100">
+                  <div class="h-full w-[42%] rounded bg-rose-500"></div>
+                </div>
+                <p class="mt-2 text-xs text-slate-500">
+                  Ưu tiên cao · 3 lần gần nhất
+                </p>
+              </div>
+              <div>
+                <div class="flex justify-between text-sm">
+                  <b>Acceptance criteria</b
+                  ><span class="text-violet-600">54%</span>
+                </div>
+                <div class="mt-2 h-2 rounded bg-slate-100">
+                  <div class="h-full w-[54%] rounded bg-violet-500"></div>
+                </div>
+                <p class="mt-2 text-xs text-slate-500">
+                  Ưu tiên cao · Trang 12
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
