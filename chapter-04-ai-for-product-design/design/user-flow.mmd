@@ -1,0 +1,17 @@
+flowchart TD
+    A[Đăng nhập] --> B[Dashboard học tập]
+    B --> C[Tải tài liệu PDF/PPTX]
+    C --> D{AI xử lý tài liệu}
+    D -->|Đang xử lý| E[Hiển thị tiến độ ingest]
+    E --> D
+    D -->|Hoàn tất| F[Xem tài liệu và tóm tắt AI]
+    F --> G[Đặt câu hỏi cho trợ lý Q&A]
+    G --> H[Nhận câu trả lời kèm citation trang/slide]
+    H --> I{Muốn luyện tập?}
+    I -->|Chưa| F
+    I -->|Có| J[Tạo Quiz AI]
+    J --> K[Làm quiz tương tác]
+    K --> L[Xem điểm và giải thích đáp án]
+    L --> M[Xem Analytics chủ đề yếu]
+    M --> N[Ôn lại trang liên quan hoặc tạo quiz ngắn]
+    N --> G
