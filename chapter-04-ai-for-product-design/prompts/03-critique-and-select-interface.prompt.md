@@ -1,21 +1,21 @@
 # Prompt: Critique and Select Interface
 
-Hãy đóng vai một hội đồng review product design để đánh giá các concept giao diện NoteWise. Mục tiêu là chọn hướng có khả năng hỗ trợ việc học và kiểm chứng nguồn tốt nhất, không chỉ chọn giao diện đẹp.
+Act as một hội đồng review product design to evaluate các concept giao diện NoteWise. Section tiêu là chọn hướng có khả năng hỗ trợ việc học và kiểm chứng nguồn tốt nhất, không chỉ chọn giao diện đẹp.
 
-## Tiêu chí chấm điểm
+## Scoring Criteria
 
-Chấm mỗi concept theo thang 1-5 cho các tiêu chí sau và giải thích bằng quan sát cụ thể:
+Score each concept from 1-5 for the following criteria and explain each score using specific observations:
 
-- Tập trung vào tác vụ học chính.
-- Khả năng đọc tài liệu và hội thoại song song.
-- Mức độ dễ tìm, dễ hiểu của citation trang/slide.
-- Khả năng nhận biết trạng thái AI và xử lý lỗi.
-- Khả năng mở rộng sang tóm tắt, quiz và analytics.
+- Focus on the primary learning task.
+- Ability to read the document and conversation in parallel.
+- Findability and clarity of page/slide citations.
+- Ability to recognize AI states and handle errors.
+- Ability to scale to summaries, quizzes, and analytics.
 - Accessibility, responsive và khả năng đọc tiếng Việt.
-- Độ phù hợp với người học mới.
-- Chi phí triển khai và độ phức tạp UI.
+- Suitability for new learners.
+- Implementation cost and UI complexity.
 
-## Câu hỏi phản biện
+## Question phản biện
 
 - Thành phần nào đang cạnh tranh với nội dung học?
 - Người dùng có biết câu trả lời dựa trên đoạn nào không?
@@ -24,6 +24,6 @@ Chấm mỗi concept theo thang 1-5 cho các tiêu chí sau và giải thích b�
 - Bố cục có còn dùng được trên màn hình nhỏ và khi citation dài không?
 - Có biểu đồ, badge hoặc màu nào tạo cảm giác chính xác giả không?
 
-## Đầu ra
+## Output
 
 Tạo bảng điểm, danh sách vấn đề theo mức độ nghiêm trọng, đề xuất chỉnh sửa cho concept thắng và một quyết định rõ ràng. Nêu các giả định cần kiểm chứng bằng prototype test. Không đánh giá dựa trên sở thích màu sắc đơn thuần; mọi nhận xét phải liên hệ tới workflow học tập của NoteWise.

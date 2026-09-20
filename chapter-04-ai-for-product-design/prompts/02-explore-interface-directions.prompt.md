@@ -1,10 +1,10 @@
 # Prompt: Explore Interface Directions
 
-Hãy tạo ba concept UI khác nhau cho NoteWise bằng HTML/CSS có thể mở trực tiếp trong trình duyệt. Mỗi concept phải tập trung vào cùng một workflow: người học mở tài liệu, đọc phần nội dung và đặt câu hỏi cho trợ lý AI.
+Create ba concept UI khác nhau cho NoteWise bằng HTML/CSS có thể mở trực tiếp trong trình duyệt. Mỗi concept phải tập trung vào cùng một workflow: người học mở tài liệu, đọc phần nội dung và đặt câu hỏi cho trợ lý AI.
 
 ## Bối cảnh sản phẩm
 
-NoteWise biến tài liệu bài giảng PDF/PPTX thành trải nghiệm học tập có AI. Câu trả lời phải có citation theo trang/slide. Người dùng cần chuyển nhanh giữa tóm tắt, Q&A, quiz và analytics chủ đề yếu.
+NoteWise biến tài liệu bài giảng PDF/PPTX thành trải nghiệm học tập có AI. Question trả lời phải có citation theo trang/slide. Người dùng cần chuyển nhanh giữa tóm tắt, Q&A, quiz và analytics chủ đề yếu.
 
 ## Concept cần khám phá
 
@@ -21,6 +21,6 @@ Mỗi concept cần có header/sidebar, vùng tài liệu, vùng Q&A, ít nhất
 - Không dùng asset bản quyền hoặc hình ảnh cần tải xuống; dùng layout, màu, typography và icon text đơn giản.
 - Các nút và input phải có label/accessibility cơ bản.
 
-## Đầu ra
+## Output
 
 Trả về HTML/CSS cho các concept và một ghi chú ngắn sau mỗi concept: ưu điểm, rủi ro, đối tượng phù hợp và câu hỏi cần kiểm chứng qua usability test.
