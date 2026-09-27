@@ -11,22 +11,50 @@ You are a UI/UX Expert and Frontend Architect. Design a comprehensive interface 
 
 ## Global Layout
 
-Design a collapsible sidebar with Logo/NoteWise, Dashboard, My Materials, Document Q&A, Quiz, Analytics & Weak Topics, Recommendations, Learning History; place Profile, Settings, Logout. The top header includes breadcrumb, global document selector, notification, AI processing status và user avatar. The main canvas supports grid, card, split-screen và modal; responsive layouts on desktop/mobile.
+Design a collapsible sidebar with Logo/NoteWise, Dashboard, My Materials, Document Q&A, Quiz, Analytics & Weak Topics, Recommendations, and Learning History; place Profile, Settings, and Logout at the bottom.
+
+The top header includes breadcrumbs, a global document selector, notifications, AI processing status, and the user avatar.
+
+The main canvas supports grid, card, split-screen, and modal layouts and must be responsive on desktop and mobile.
 
 ## Seven Required Screens
 
-1. **Auth:** card căn giữa, tab Sign In/Sign Up, Email, Password, xác thực mật khẩu, inline error, show/hide password, loading button, protected-route security error.
-2. **Materials:** upload button, search, subject/tag/status filters, grid/list toggle, drag-drop PDF/DOCX/PPTX, file limit, upload-processing-ready/failed progress, retry, quick menu và delete confirmation.
-3. **Document Q&A:** 60/40 split, document selector, tabs tài liệu gốc/tóm tắt AI, bullets/formula/chips, chat, prompt, answer, page/section citation click để highlight, insufficient-evidence warning.
-4. **Quiz:** setup modal với source, 5-20 questions, type, difficulty, optional topic, AI skeleton; player với progress/timer/document, topic/difficulty, options, previous/skip/submit/next; result score/time/correct-wrong, review, explanation/citation và actions.
-5. **Analytics:** accuracy over time, completed quizzes, mastered documents, topic mastery bars/matrix, weak cards dưới 60%, priority reason, quick actions.
-6. **Recommendations:** tiêu đề “Learning Actions Recommended for You”, context tag, explanation, source pages, open slide/5-question quiz CTAs và insufficient-data banner.
-7. **Learning History:** filters time/document/activity/score/weak topic, table/timeline, clickable detail row and review drawer.
+### 1. Authentication
 
-## Design tokens
+Centered card, Sign In/Sign Up tabs, Email, Password, password confirmation, inline errors, show/hide password, loading button, and protected-route security error.
 
-Dùng Indigo `#4F46B5` làm primary, Purple `#7C5CFC` cho AI, Electric Teal `#0F9F95`, Mint success, Amber warning, Rose error, warm off-white canvas và Ink text. Dùng Be Vietnam Pro hoặc Inter; spacing 4/8/12/16/24/32/48px; radius 8/12/16px; subtle shadow; WCAG AA contrast; visible keyboard focus.
+### 2. Materials
+
+Upload button, search, subject/tag/status filters, grid/list toggle, drag-and-drop PDF/DOCX/PPTX, file limit, upload-processing-ready/failed progress, retry, quick menu, and delete confirmation.
+
+### 3. Document Q&A
+
+60/40 split, document selector, Original Document/AI Summary tabs, bullets/formulas/chips, chat, prompt, answer, page/section citation that highlights the related passage, and insufficient-evidence warning.
+
+### 4. Quiz
+
+Setup modal with source, 5-20 questions, type, difficulty, optional topic, and AI skeleton; player with progress/timer/document, topic/difficulty, options, Previous/Skip/Submit/Next; result with score/time/correct-wrong, review, explanation/citation, and actions.
+
+### 5. Analytics
+
+Accuracy over time, completed quizzes, mastered documents, topic mastery bars/matrix, weak-topic cards below 60%, priority reason, and quick actions.
+
+### 6. Recommendations
+
+Title `Learning Actions Recommended for You`, context tag, explanation, source pages, Open Lecture Slides/Take 5-Question Review Quiz CTAs, and insufficient-data banner.
+
+### 7. Learning History
+
+Filters for time/document/activity/score/weak topic, table/timeline, clickable detail row, and review drawer.
+
+## Design Tokens
+
+Use Indigo `#4F46B5` as primary, Purple `#7C5CFC` for AI, Electric Teal `#0F9F95`, Mint success, Amber warning, Rose error, warm off-white canvas, and Ink text.
+
+Use Be Vietnam Pro or Inter; spacing 4/8/12/16/24/32/48px; radius 8/12/16px; subtle shadow; WCAG AA contrast; and visible keyboard focus.
 
 ## Output
 
-Trả về wireframe layout, component inventory, token table, interaction states và microcopy tiếng Việt cho cả bảy màn hình. Tạo HTML/Tailwind single-file concepts có thể mở trực tiếp và một prototype HTML/CSS/JS thuần mô phỏng các luồng chính.
+Return wireframe layouts, a component inventory, a token table, interaction states, and English microcopy for all seven screens.
+
+Create HTML/Tailwind single-file concepts that can be opened directly and a pure HTML/CSS/JS prototype that simulates the main flows.
