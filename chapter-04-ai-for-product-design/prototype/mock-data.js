@@ -54,6 +54,7 @@ window.noteWiseData = {
   quizQuestions: [
     {
       question: "Một acceptance criteria tốt cần có đặc điểm nào?",
+      type: "multiple-choice",
       topic: "Acceptance criteria",
       difficulty: "Dễ",
       options: [
@@ -68,14 +69,13 @@ window.noteWiseData = {
       citation: "Trang 12, Mục 3.2",
     },
     {
-      question: "Mục tiêu chính của product discovery là gì?",
+      question: "Product discovery chỉ nhằm chọn công nghệ database cho sản phẩm.",
+      type: "true-false",
       topic: "Product discovery",
       difficulty: "Trung bình",
       options: [
-        "Viết code thật nhanh",
-        "Xác thực vấn đề và nhu cầu người dùng",
-        "Chọn màu giao diện",
-        "Tối ưu database",
+        "Đúng",
+        "Sai",
       ],
       answer: 1,
       explanation:
@@ -83,16 +83,12 @@ window.noteWiseData = {
       citation: "Trang 4, Mục 1.1",
     },
     {
-      question: "Citation trong câu trả lời AI giúp người học làm gì?",
+      question: "Citation trong câu trả lời AI giúp người học ____ nguồn thông tin.",
+      type: "fill-blank",
       topic: "RAG evaluation",
       difficulty: "Dễ",
-      options: [
-        "Trang trí câu trả lời",
-        "Kiểm chứng nguồn thông tin",
-        "Tăng số lượng câu chữ",
-        "Tự động nộp bài",
-      ],
-      answer: 1,
+      options: [],
+      answer: "kiểm chứng",
       explanation:
         "Citation dẫn người học về trang hoặc slide gốc để đối chiếu.",
       citation: "Trang 24, Mục 5.1",
@@ -102,6 +98,7 @@ window.noteWiseData = {
     {
       name: "Decision Trees",
       score: 42,
+      attempts: 3,
       delta: "-14%",
       page: "Trang 12-15",
       tone: "rose",
@@ -111,6 +108,7 @@ window.noteWiseData = {
     {
       name: "Acceptance criteria",
       score: 54,
+      attempts: 2,
       delta: "-12%",
       page: "Trang 12",
       tone: "violet",
@@ -120,6 +118,7 @@ window.noteWiseData = {
     {
       name: "User research methods",
       score: 61,
+      attempts: 1,
       delta: "-8%",
       page: "Trang 8",
       tone: "orange",
@@ -129,11 +128,28 @@ window.noteWiseData = {
     {
       name: "RAG evaluation",
       score: 68,
+      attempts: 0,
       delta: "-5%",
       page: "Trang 24",
       tone: "teal",
       priority: "Theo dõi",
       reason: "Còn thiếu dữ liệu ở phần đánh giá citation.",
+    },
+  ],
+  recommendations: [
+    {
+      topic: "Decision Trees",
+      documentId: "discovery",
+      pageRange: "12-15",
+      title: "Ôn lại cắt tỉa cây quyết định",
+      reason: "Luyện tập lại chủ đề đang có điểm thấp.",
+    },
+    {
+      topic: "Vector databases",
+      documentId: null,
+      pageRange: null,
+      title: "Khám phá Vector databases",
+      reason: "Tìm tài liệu phù hợp để bắt đầu chủ đề này.",
     },
   ],
   history: [

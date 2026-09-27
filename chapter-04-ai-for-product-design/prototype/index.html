@@ -34,6 +34,14 @@
           <p>Tiến độ tuần này</p>
           <strong>72%</strong>
           <div class="progress-line"><span style="width: 72%"></span></div>
+          <button
+            class="ghost-btn"
+            id="sidebar-logout"
+            data-action="logout"
+            hidden
+          >
+            Đăng xuất
+          </button>
         </div>
       </aside>
       <div class="workspace">
@@ -52,7 +60,39 @@
             ><label class="search"
               >⌕ <input type="search" placeholder="Tìm tài liệu..."
             /></label>
-            <div class="avatar">AT</div>
+            <div
+              class="auth-header-actions"
+              id="guest-actions"
+              style="align-items: center; gap: 8px"
+            >
+              <button
+                class="ghost-btn"
+                data-auth-open="login"
+                data-screen="screen-auth"
+              >
+                Đăng nhập
+              </button>
+              <button
+                class="primary-btn"
+                data-auth-open="register"
+                data-screen="screen-auth"
+              >
+                Đăng ký
+              </button>
+            </div>
+            <div
+              class="auth-user hidden"
+              id="user-actions"
+              hidden
+              style="align-items: center; gap: 10px"
+            >
+              <div class="avatar" aria-label="Ảnh đại diện An Trần">AT</div>
+              <span id="auth-user-name">An Trần</span>
+              <button class="panel-link" data-action="session-expired">
+                Mô phỏng hết hạn
+              </button>
+              <button class="ghost-btn" data-action="logout">Đăng xuất</button>
+            </div>
           </div>
         </header>
         <main class="page">
@@ -114,7 +154,11 @@
               </article>
             </div>
           </section>
-          <section id="auth-panel" class="auth-panel hidden">
+          <section
+            id="screen-auth"
+            class="auth-panel hidden"
+            aria-labelledby="auth-title"
+          >
             <div class="auth-screen">
               <div class="auth-card">
                 <div class="brand auth-brand">
@@ -124,13 +168,23 @@
                 <h1 id="auth-title">Chào mừng trở lại</h1>
                 <p class="subtle">Đăng nhập để tiếp tục tiến độ học của bạn.</p>
                 <div class="auth-tabs">
-                  <button class="auth-tab active" data-auth-mode="login">
+                  <button
+                    class="auth-tab active"
+                    type="button"
+                    data-auth-tab="login"
+                    aria-pressed="true"
+                  >
                     Đăng nhập</button
-                  ><button class="auth-tab" data-auth-mode="register">
+                  ><button
+                    class="auth-tab"
+                    type="button"
+                    data-auth-tab="register"
+                    aria-pressed="false"
+                  >
                     Đăng ký
                   </button>
                 </div>
-                <form id="auth-form">
+                <form id="auth-form" novalidate>
                   <label
                     >Email<input
                       id="auth-email"
@@ -149,11 +203,14 @@
                       /><button type="button" data-toggle-password>Hiện</button>
                     </div>
                     <span class="field-error" id="password-error"></span></label
-                  ><label class="register-only" hidden
-                    >Xác thực mật khẩu<input
+                  ><label class="register-only" hidden style="display: none"
+                    >Xác nhận mật khẩu<input
                       id="auth-confirm"
                       type="password"
-                      placeholder="Nhập lại mật khẩu" /></label
+                      placeholder="Nhập lại mật khẩu" /><span
+                      class="field-error"
+                      id="confirm-error"
+                    ></span></label
                   ><button class="primary-btn auth-submit" type="submit">
                     Đăng nhập
                   </button>
@@ -185,15 +242,11 @@
                 <input
                   id="material-search"
                   placeholder="Tìm theo tên tài liệu..." /></label
-              ><select>
-                <option>Tất cả môn học</option>
-                <option>Product</option>
-                <option>AI</option></select
-              ><select>
-                <option>Tất cả trạng thái</option>
-                <option>Sẵn sàng</option>
-                <option>Đang xử lý</option>
-                <option>Thất bại</option>
+              ><select id="material-status-filter" aria-label="Lọc theo trạng thái">
+                <option value="Tất cả trạng thái">Tất cả trạng thái</option>
+                <option value="Sẵn sàng">Sẵn sàng</option>
+                <option value="Đang xử lý">Đang xử lý</option>
+                <option value="Thất bại">Thất bại</option>
               </select>
               <div class="view-toggle">
                 <button class="active">▦</button><button>☷</button>
@@ -296,11 +349,12 @@
                     dung tài liệu đã nạp.
                   </div>
                 </div>
-                <form class="chat-composer">
+                <form class="chat-composer" id="qa-form">
                   <textarea
+                    id="qa-question"
                     placeholder="Hỏi bất kỳ điều gì về bài giảng này..."
                   ></textarea
-                  ><button class="primary-btn">Gửi →</button>
+                  ><button class="primary-btn" type="submit">Gửi →</button>
                 </form>
               </aside>
             </div>
@@ -332,8 +386,9 @@
                 <h2 class="quiz-question" id="quiz-question"></h2>
                 <div class="options" id="quiz-options"></div>
                 <div class="quiz-footer">
-                  <button class="ghost-btn">← Câu trước</button
-                  ><span class="quiz-status" id="quiz-feedback"
+                  <button class="ghost-btn" id="skip-question" type="button">
+                    Bỏ qua
+                  </button><span class="quiz-status" id="quiz-feedback"
                     >Chọn một đáp án để tiếp tục.</span
                   ><button class="primary-btn" id="next-question" disabled>
                     Câu tiếp theo →
@@ -355,7 +410,9 @@
                   <p class="eyebrow">Quiz complete</p>
                   <h2>Kết quả bài luyện tập</h2>
                 </div>
-                <span class="status-badge ready">Đã lưu</span>
+                <span class="status-badge processing" id="result-save-status"
+                  >Đang lưu...</span
+                ><span class="status-badge failed" id="result-skipped" hidden></span>
               </div>
               <div class="result-grid">
                 <strong id="result-score">0%</strong
@@ -363,9 +420,7 @@
                   ><b id="result-correct">0/3</b><small>Câu đúng</small></span
                 ><span><b>8 phút</b><small>Thời gian</small></span>
               </div>
-              <p class="subtle">
-                AI đã lưu giải thích và citation cho từng câu trả lời.
-              </p>
+              <p class="subtle" id="result-save-message"></p>
               <div>
                 <button class="ghost-btn" data-action="retry-quiz">
                   Làm lại bài này</button
@@ -376,6 +431,13 @@
             </article>
           </section>
           <section id="screen-analytics" class="screen-content hidden">
+            <div class="empty-state guest-gate" id="analytics-guest-gate" hidden>
+              <strong>Đăng nhập để xem phân tích học tập</strong>
+              <button class="primary-btn" data-auth-open="login" data-screen="screen-auth">
+                Đăng nhập để xem
+              </button>
+            </div>
+            <div id="analytics-content">
             <div class="page-heading">
               <div>
                 <p class="eyebrow">Analytics & Weak Topics</p>
@@ -396,8 +458,8 @@
                 ><span class="trend">↑ 3 bài</span>
               </article>
               <article class="stat-card">
-                <small>Tài liệu đã làm chủ</small><strong>4</strong
-                ><span class="trend">2 tài liệu đang học</span>
+                <small>Số chủ đề có đủ dữ liệu</small><strong id="enough-topics-count">2</strong
+                ><span class="trend">Có ít nhất 2 lượt làm</span>
               </article>
               <article class="stat-card">
                 <small>Chủ đề dưới 60%</small><strong>2</strong
@@ -421,14 +483,25 @@
                   <h2>Mức độ thành thạo chủ đề</h2>
                 </div>
                 <div class="weak-list" id="analytics-topics"></div>
+                <div class="data-limited" id="insufficient-topics-banner" hidden>
+                  Chưa đủ bằng chứng để đánh giá các chủ đề còn lại.
+                </div>
               </article>
               <article class="panel">
                 <div class="panel-heading"><h2>Chủ đề yếu cần chú ý</h2></div>
                 <div id="priority-topics"></div>
               </article>
             </div>
+            </div>
           </section>
           <section id="screen-recommendations" class="screen-content hidden">
+            <div class="empty-state guest-gate" id="recommendations-guest-gate" hidden>
+              <strong>Đăng nhập để xem gợi ý học tập</strong>
+              <button class="primary-btn" data-auth-open="login" data-screen="screen-auth">
+                Đăng nhập để xem
+              </button>
+            </div>
+            <div id="recommendations-content">
             <div class="page-heading">
               <div>
                 <p class="eyebrow">Recommendation engine</p>
@@ -442,45 +515,18 @@
               ✦ Hãy hoàn thành thêm các bài quiz để AI có đủ dữ liệu đưa ra gợi
               ý chính xác hơn.
             </div>
-            <div class="recommendation-grid">
-              <article class="recommendation-card">
-                <span class="context-tag"
-                  >Dựa trên chủ đề yếu: Decision Trees</span
-                >
-                <h2>Ôn lại cắt tỉa cây quyết định</h2>
-                <p>
-                  Bạn thường trả lời sai các câu hỏi về cắt tỉa cây quyết định.
-                  Đọc lại Trang 12-15 và làm bài kiểm tra nhanh 5 câu.
-                </p>
-                <small>Nguồn: Decision Trees · Trang 12-15</small>
-                <div>
-                  <button class="ghost-btn">Mở Slide bài giảng</button
-                  ><button class="primary-btn" data-screen="screen-quiz">
-                    Quiz 5 câu →
-                  </button>
-                </div>
-              </article>
-              <article class="recommendation-card">
-                <span class="context-tag teal-tag"
-                  >Dựa trên tiến độ: RAG evaluation</span
-                >
-                <h2>Đọc lại phần citation và đánh giá</h2>
-                <p>
-                  Điểm của bạn đã tăng 5%. Một phiên Q&A ngắn sẽ giúp củng cố
-                  cách kiểm chứng nguồn.
-                </p>
-                <small>Nguồn: RAG Fundamentals · Trang 24</small>
-                <div>
-                  <button class="ghost-btn" data-screen="screen-qa">
-                    Mở tài liệu</button
-                  ><button class="primary-btn" data-screen="screen-quiz">
-                    Bắt đầu học →
-                  </button>
-                </div>
-              </article>
+            <div class="recommendation-grid" id="recommendation-list">
+            </div>
             </div>
           </section>
           <section id="screen-history" class="screen-content hidden">
+            <div class="empty-state guest-gate" id="history-guest-gate" hidden>
+              <strong>Đăng nhập để xem lịch sử học tập</strong>
+              <button class="primary-btn" data-auth-open="login" data-screen="screen-auth">
+                Đăng nhập để xem
+              </button>
+            </div>
+            <div id="history-content">
             <div class="page-heading">
               <div>
                 <p class="eyebrow">Learning History</p>
@@ -518,6 +564,7 @@
                 </button>
               </div>
             </article>
+            </div>
           </section>
         </main>
       </div>
@@ -543,9 +590,9 @@
         <button class="dialog-close" data-close-dialog>×</button>
       </div>
       <label
-        >Tài liệu nguồn<select>
-          <option>Product Discovery</option>
-          <option>Decision Trees</option>
+        >Tài liệu nguồn<select id="quiz-source">
+          <option value="discovery">Product Discovery</option>
+          <option value="trees">Decision Trees</option>
         </select></label
       ><label>Số câu hỏi<input type="range" min="5" max="20" value="5" /></label
       ><label
@@ -563,9 +610,17 @@
       ><label
         >Chủ đề cụ thể <span class="subtle">(Tùy chọn)</span
         ><input placeholder="Ví dụ: cắt tỉa cây" /></label
-      ><button class="primary-btn" data-close-dialog data-screen="screen-quiz">
+      ><button class="primary-btn" id="start-quiz" type="button">
         Bắt đầu Quiz →
       </button>
+    </dialog>
+    <dialog id="state-dialog">
+      <div class="dialog-icon">!</div>
+      <h2 id="state-dialog-title"></h2>
+      <p id="state-dialog-message"></p>
+      <div>
+        <button class="primary-btn" data-close-dialog>Đã hiểu</button>
+      </div>
     </dialog>
     <script src="mock-data.js"></script>
     <script type="application/disabled">

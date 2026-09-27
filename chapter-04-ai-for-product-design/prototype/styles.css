@@ -560,6 +560,14 @@ dialog { width: min(92vw, 430px); padding: 27px; border: 0; border-radius: 16px;
 .screen-content.hidden { display: none; }
 .screen-content.block { display: block; }
 .auth-panel.hidden { display: none; }
+[hidden] { display: none !important; }
+.option { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.option input { accent-color: var(--violet); }
+.fill-answer { display: grid; gap: 8px; max-width: 420px; color: var(--muted); font-size: 12px; }
+.fill-answer input { padding: 12px; border: 1px solid var(--line); border-radius: 8px; }
+.guest-gate { min-height: 50vh; display: grid; align-content: center; justify-items: center; gap: 12px; }
+.guest-gate .primary-btn { justify-self: center; }
+.recommendation-card .context-tag { width: fit-content; }
 .quick-actions { display: flex; flex-wrap: wrap; gap: 5px; width: 100%; padding-left: 53px; }
 .quick-action { padding: 5px 7px; border: 1px solid var(--line); border-radius: 6px; color: var(--violet); background: white; font-size: 10px; font-weight: 700; }
 .quick-action:hover { background: var(--violet-soft); }
