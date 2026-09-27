@@ -567,6 +567,11 @@ dialog { width: min(92vw, 430px); padding: 27px; border: 0; border-radius: 16px;
 .fill-answer input { padding: 12px; border: 1px solid var(--line); border-radius: 8px; }
 .guest-gate { min-height: 50vh; display: grid; align-content: center; justify-items: center; gap: 12px; }
 .guest-gate .primary-btn { justify-self: center; }
+.guest-illustration { display: grid; place-items: center; width: 58px; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; color: var(--violet); background: var(--violet-soft); font-size: 25px; }
+.guest-usage { margin: 0 0 10px; color: var(--muted); font-size: 11px; text-align: center; }
+.result-login { margin: 0 0 10px; }
+.chat-ai.retry-response { border-left: 3px solid var(--teal); }
+dialog > div:last-child { flex-wrap: wrap; }
 .recommendation-card .context-tag { width: fit-content; }
 .quick-actions { display: flex; flex-wrap: wrap; gap: 5px; width: 100%; padding-left: 53px; }
 .quick-action { padding: 5px 7px; border: 1px solid var(--line); border-radius: 6px; color: var(--violet); background: white; font-size: 10px; font-weight: 700; }

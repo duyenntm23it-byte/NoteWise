@@ -3,6 +3,11 @@ let questionIndex = 0;
 let score = 0;
 let skippedCount = 0;
 let isLoggedIn = localStorage.getItem("notewise.isLoggedIn") === "true";
+let guestAiUsage = JSON.parse(
+  sessionStorage.getItem("notewise.guestAiUsage") || '{"qa":0,"summary":0}',
+);
+let guestQuizUsed = sessionStorage.getItem("notewise.guestQuizUsed") === "true";
+const guestAiLimit = 3;
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -21,6 +26,14 @@ const screenLabels = {
 function navigateTo(screenId) {
   const target = document.getElementById(screenId);
   if (!target) return;
+  if (screenId === "screen-quiz" && !isLoggedIn && guestQuizUsed) {
+    showStateAlert(
+      "Bạn đã dùng bài Quiz demo",
+      "Đăng nhập để tiếp tục làm Quiz và lưu kết quả.",
+      { login: true },
+    );
+    return;
+  }
 
   const isAuthScreen = screenId === "screen-auth";
   $$(".screen-content").forEach((screen) => {
@@ -49,7 +62,7 @@ function toggleAuthTab(mode) {
   $("#auth-title").textContent = register
     ? "Tạo tài khoản mới"
     : "Chào mừng trở lại";
-  $(".auth-submit").textContent = register ? "Đăng ký tài khoản" : "Đăng nhập";
+  $(".auth-submit").textContent = register ? "Tạo tài khoản" : "Đăng nhập";
   $$("[data-auth-tab]").forEach((tab) => {
     const active = tab.dataset.authTab === mode;
     tab.classList.toggle("active", active);
@@ -74,6 +87,7 @@ function updateAuthUI() {
   $("#user-actions").style.display = isLoggedIn ? "flex" : "none";
   $("#sidebar-logout").classList.toggle("hidden", !isLoggedIn);
   $("#sidebar-logout").hidden = !isLoggedIn;
+  $("#dashboard-upload-cta").hidden = !isLoggedIn;
   $("#upload-zone").hidden = !isLoggedIn;
   $$('[data-action="upload"]').forEach((button) => {
     button.hidden = !isLoggedIn;
@@ -82,6 +96,25 @@ function updateAuthUI() {
     $(`#${screen}-content`).hidden = !isLoggedIn;
     $(`#${screen}-guest-gate`).hidden = isLoggedIn;
   });
+  $("#guest-qa-usage").hidden = isLoggedIn;
+  $("#guest-qa-usage").textContent =
+    `Guest còn ${Math.max(0, guestAiLimit - guestAiUsage.qa)} lượt hỏi đáp trong phiên này.`;
+}
+
+function consumeGuestUsage(action) {
+  if (isLoggedIn) return true;
+  if (guestAiUsage[action] >= guestAiLimit) {
+    showStateAlert(
+      "Bạn đã dùng hết lượt miễn phí",
+      "Đăng nhập để tiếp tục sử dụng tính năng học tập AI.",
+      { login: true },
+    );
+    return false;
+  }
+  guestAiUsage[action] += 1;
+  sessionStorage.setItem("notewise.guestAiUsage", JSON.stringify(guestAiUsage));
+  updateAuthUI();
+  return true;
 }
 
 function documentMarkup(documentItem) {
@@ -96,7 +129,7 @@ function documentMarkup(documentItem) {
       : documentItem.status === "Thất bại"
         ? "failed"
         : "processing";
-  return `<div class="document">
+  return `<div class="document" data-document-id="${documentItem.id}">
     <div class="doc-icon ${documentItem.color}">${fileType}</div>
     <div class="doc-info"><strong>${documentItem.title}</strong><small>${documentItem.meta} · ${documentItem.subject} · ${documentItem.date}</small></div>
     <span class="status-badge ${statusClass}">${documentItem.status}</span>
@@ -108,7 +141,7 @@ function documentMarkup(documentItem) {
     </div>
     <button class="doc-open" aria-label="Mở ${documentItem.title}" data-action="qa">↗</button>
     ${documentItem.status === "Thất bại" ? '<button class="retry-btn" data-action="retry">Thử lại</button>' : ""}
-    <button class="doc-menu" data-action="delete">•••</button>
+    ${isLoggedIn ? '<button class="doc-menu" data-action="delete" aria-label="Xóa tài liệu">•••</button>' : ""}
   </div>`;
 }
 
@@ -117,7 +150,9 @@ function topicMarkup(topic) {
 }
 
 function renderLists() {
-  const visibleDocuments = isLoggedIn ? data.documents : data.documents.slice(0, 1);
+  const visibleDocuments = isLoggedIn
+    ? data.documents
+    : data.documents.slice(0, 1);
   $("#dashboard-documents").innerHTML = data.documents
     .slice(0, 3)
     .map(documentMarkup)
@@ -128,10 +163,13 @@ function renderLists() {
     .slice(0, 3)
     .map(topicMarkup)
     .join("");
-  const supportedTopics = data.weakTopics.filter((topic) => topic.attempts >= 2);
+  const supportedTopics = data.weakTopics.filter(
+    (topic) => topic.attempts >= 2,
+  );
   $("#analytics-topics").innerHTML = supportedTopics.map(topicMarkup).join("");
   $("#enough-topics-count").textContent = supportedTopics.length;
-  $("#insufficient-topics-banner").hidden = supportedTopics.length === data.weakTopics.length;
+  $("#insufficient-topics-banner").hidden =
+    supportedTopics.length === data.weakTopics.length;
   $("#priority-topics").innerHTML = data.weakTopics
     .filter((topic) => topic.score < 60 && topic.attempts >= 2)
     .map(
@@ -149,7 +187,7 @@ function renderLists() {
         <h2>${recommendation.title}</h2>
         <p>${documentItem ? recommendation.reason : "Bạn chưa có tài liệu về chủ đề này."}</p>
         ${documentItem ? `<small>Nguồn: ${documentItem.title} · Trang ${recommendation.pageRange} · ${documentItem.meta}</small>` : ""}
-        <div>${documentItem ? '<button class="ghost-btn" data-screen="screen-materials">Mở tài liệu</button>' : '<button class="primary-btn" data-action="upload">Tải thêm</button>'}
+        <div>${documentItem ? '<button class="ghost-btn" data-screen="screen-materials">Mở tài liệu</button>' : '<button class="primary-btn" data-action="upload">Tải thêm tài liệu</button>'}
           <button class="primary-btn" data-screen="screen-quiz">Bắt đầu học →</button>
         </div>
       </article>`;
@@ -212,6 +250,7 @@ function finishQuiz() {
   $("#skip-question").disabled = true;
   $("#result-skipped").hidden = skippedCount === 0;
   $("#result-skipped").textContent = `Bỏ qua: ${skippedCount} câu`;
+  $("#result-login").hidden = isLoggedIn;
   if (isLoggedIn) {
     $("#result-save-status").hidden = false;
     $("#result-save-status").className = "status-badge processing";
@@ -224,24 +263,50 @@ function finishQuiz() {
         "AI đã lưu giải thích và citation cho từng câu trả lời.";
     }, 700);
   } else {
+    guestQuizUsed = true;
+    sessionStorage.setItem("notewise.guestQuizUsed", "true");
     $("#result-save-status").hidden = true;
-    $("#result-save-message").textContent =
-      "⚠️ Kết quả không được lưu vì bạn chưa đăng nhập";
+    $("#result-save-message").textContent = "";
+    $("#result-save-message").innerHTML =
+      "⚠️ Kết quả không được lưu vì bạn chưa đăng nhập.";
   }
 }
 
-function showStateAlert(title, message) {
+function showStateAlert(title, message, options = {}) {
   $("#state-dialog-title").textContent = title;
   $("#state-dialog-message").textContent = message;
+  $("#state-dialog-retry").hidden = !options.retry;
+  $("#state-dialog-login").hidden = !options.login;
   $("#state-dialog").showModal();
 }
 
+function expireSession() {
+  isLoggedIn = false;
+  localStorage.setItem("notewise.isLoggedIn", "false");
+  renderLists();
+  updateAuthUI();
+  navigateTo("screen-dashboard");
+  showStateAlert(
+    "Phiên làm việc hết hạn",
+    "Bạn đã được chuyển về chế độ Khách. Vui lòng đăng nhập lại để tiếp tục.",
+    { login: true },
+  );
+}
+
+window.expireSession = expireSession;
+window.addEventListener("notewise:session-expired", expireSession);
+window.addEventListener("notewise:unauthorized", expireSession);
+
 function isAnswerCorrect(question) {
   if (question.type === "fill-blank") {
-    return $("#fill-answer").value.trim().toLocaleLowerCase("vi") ===
-      question.answer.toLocaleLowerCase("vi");
+    return (
+      $("#fill-answer").value.trim().toLocaleLowerCase("vi") ===
+      question.answer.toLocaleLowerCase("vi")
+    );
   }
-  return Number($("input[name='quiz-answer']:checked")?.value) === question.answer;
+  return (
+    Number($("input[name='quiz-answer']:checked")?.value) === question.answer
+  );
 }
 
 function advanceQuiz() {
@@ -272,16 +337,20 @@ document.addEventListener("click", (event) => {
     updateAuthUI();
     navigateTo("screen-dashboard");
   }
-  if (action === "session-expired") {
-    isLoggedIn = false;
-    localStorage.setItem("notewise.isLoggedIn", "false");
-    renderLists();
-    updateAuthUI();
-    navigateTo("screen-dashboard");
-    showStateAlert(
-      "Phiên làm việc hết hạn",
-      "Bạn đã được chuyển về chế độ Khách. Đăng nhập để tiếp tục lưu tiến độ.",
-    );
+  if (action === "retry-ai") {
+    $("#state-dialog").close();
+    const question = $("#qa-question").value.trim();
+    if (question) {
+      const userBubble = document.createElement("div");
+      userBubble.className = "chat-user";
+      userBubble.textContent = question;
+      const answerBubble = document.createElement("div");
+      answerBubble.className = "chat-ai retry-response";
+      answerBubble.textContent =
+        "Đã thử lại thành công. Hãy đối chiếu câu trả lời với tài liệu gốc.";
+      $("#chat-messages").append(userBubble, answerBubble);
+      $("#qa-question").value = "";
+    }
   }
   if (action === "upload") {
     if (!isLoggedIn) {
@@ -293,6 +362,19 @@ document.addEventListener("click", (event) => {
     setTimeout(() => $("#upload-zone").classList.remove("uploading"), 900);
   }
   if (action === "summary") {
+    const documentId = event.target.closest(".document")?.dataset.documentId;
+    const documentItem = data.documents.find((item) => item.id === documentId);
+    if (
+      !documentItem?.contentSufficient ||
+      documentItem.status !== "Sẵn sàng"
+    ) {
+      showStateAlert(
+        "Nội dung không đủ để tạo Tóm tắt",
+        "Tài liệu quá ngắn hoặc chưa có đủ nội dung để tạo bản tóm tắt.",
+      );
+      return;
+    }
+    if (!consumeGuestUsage("summary")) return;
     navigateTo("screen-qa");
     $$('[data-reader-tab="summary"]').forEach((tab) => tab.click());
   }
@@ -342,7 +424,11 @@ document.addEventListener("click", (event) => {
       (item) => item.id === $("#quiz-source").value,
     );
     $("#quiz-dialog").close();
-    if (!selectedDocument || selectedDocument.status !== "Sẵn sàng") {
+    if (
+      !selectedDocument ||
+      selectedDocument.status !== "Sẵn sàng" ||
+      !selectedDocument.contentSufficient
+    ) {
       showStateAlert(
         "Nội dung không đủ để tạo Quiz/Q&A",
         "Tài liệu này chưa sẵn sàng hoặc không có đủ nội dung để tạo Quiz.",
@@ -379,13 +465,18 @@ document.addEventListener("input", (event) => {
 $("#qa-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const question = $("#qa-question").value.trim();
+  if (!question) {
+    showStateAlert(
+      "Nội dung không đủ để tạo Quiz/Q&A",
+      "Nhập câu hỏi để NoteWise có thể tìm nội dung liên quan trong tài liệu.",
+    );
+    return;
+  }
+  if (!consumeGuestUsage("qa")) return;
   showStateAlert(
-    question
-      ? "Đầu ra AI không hợp lệ"
-      : "Nội dung không đủ để tạo Quiz/Q&A",
-    question
-      ? "AI trả về nội dung không đúng định dạng. Hãy thử lại sau."
-      : "Nhập câu hỏi hoặc chọn tài liệu có đủ nội dung để tiếp tục.",
+    "Đầu ra AI không hợp lệ",
+    "AI trả về nội dung không đúng định dạng. Hãy thử lại.",
+    { retry: true },
   );
 });
 
@@ -395,7 +486,9 @@ function filterDocuments() {
     row.hidden =
       (selectedStatus !== "Tất cả trạng thái" &&
         row.querySelector(".status-badge").textContent !== selectedStatus) ||
-      !row.textContent.toLowerCase().includes($("#material-search").value.toLowerCase());
+      !row.textContent
+        .toLowerCase()
+        .includes($("#material-search").value.toLowerCase());
   });
 }
 
@@ -449,9 +542,7 @@ $$("[data-toggle-password]").forEach((button) =>
   }),
 );
 
-$("#material-search").addEventListener("input", (event) =>
-  filterDocuments(),
-);
+$("#material-search").addEventListener("input", (event) => filterDocuments());
 
 renderLists();
 renderQuestion();

@@ -17,6 +17,7 @@ window.noteWiseData = {
       progress: 86,
       color: "violet",
       status: "Sẵn sàng",
+      contentSufficient: true,
       date: "Hôm nay",
     },
     {
@@ -27,6 +28,7 @@ window.noteWiseData = {
       progress: 100,
       color: "teal",
       status: "Sẵn sàng",
+      contentSufficient: true,
       date: "Hôm qua",
     },
     {
@@ -37,6 +39,7 @@ window.noteWiseData = {
       progress: 42,
       color: "orange",
       status: "Đang xử lý",
+      contentSufficient: false,
       date: "18/09/2026",
     },
     {
@@ -47,6 +50,7 @@ window.noteWiseData = {
       progress: 0,
       color: "rose",
       status: "Thất bại",
+      contentSufficient: false,
       date: "17/09/2026",
       error: "Không thể đọc file DOCX.",
     },
@@ -69,21 +73,20 @@ window.noteWiseData = {
       citation: "Trang 12, Mục 3.2",
     },
     {
-      question: "Product discovery chỉ nhằm chọn công nghệ database cho sản phẩm.",
+      question:
+        "Product discovery chỉ nhằm chọn công nghệ database cho sản phẩm.",
       type: "true-false",
       topic: "Product discovery",
       difficulty: "Trung bình",
-      options: [
-        "Đúng",
-        "Sai",
-      ],
+      options: ["Đúng", "Sai"],
       answer: 1,
       explanation:
         "Discovery giúp đội ngũ hiểu và kiểm chứng vấn đề trước khi đầu tư giải pháp.",
       citation: "Trang 4, Mục 1.1",
     },
     {
-      question: "Citation trong câu trả lời AI giúp người học ____ nguồn thông tin.",
+      question:
+        "Citation trong câu trả lời AI giúp người học ____ nguồn thông tin.",
       type: "fill-blank",
       topic: "RAG evaluation",
       difficulty: "Dễ",
