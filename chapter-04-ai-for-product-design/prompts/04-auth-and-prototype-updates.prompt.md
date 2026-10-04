@@ -1,71 +1,71 @@
-# Prompt: Cập nhật UI/UX, Phân quyền Guest/Logged-in và Hoàn thiện Prototype NoteWise
+# Prompt: Update UI/UX, Guest/Logged-in Permissions, and Complete the NoteWise Prototype
 
-Bạn là một Chuyên gia UI/UX và Kiến trúc sư Frontend. Hãy cập nhật bản Prototype NoteWise trong thư mục `prototype/` dựa trên các quy tắc phân quyền, sửa đổi giao diện và bổ sung các trạng thái tương tác chi tiết bên dưới.
+You are a UI/UX Expert and Frontend Architect. Update the NoteWise prototype in the `prototype/` directory based on the permission rules, interface changes, and detailed interaction states described below.
 
-## 1. Cơ chế Phân quyền Khách (Guest) vs Đã đăng nhập (Logged-in)
+## 1. Guest vs. Logged-in Permissions
 
-Mô phỏng trạng thái đăng nhập bằng `localStorage` (`isLoggedIn = true/false`) trong `script.js` mà không cần backend:
+Simulate the login state using `localStorage` (`isLoggedIn = true/false`) in `script.js`, without requiring a backend.
 
-### Chế độ Khách (`isLoggedIn === false`):
+### Guest Mode (`isLoggedIn === false`)
 
-- **Top Header**: Hiển thị nút [Đăng nhập] và [Đăng ký] ở góc phải (thay vì Avatar).
-- **Trang chủ (Dashboard)**: Xem dữ liệu mẫu tĩnh.
-- **Tài liệu (Materials)**: Chỉ xem 1–2 tài liệu mẫu; Ẩn/Khóa nút Tải lên file mới và nút Xóa file.
-- **Q&A & Tóm tắt AI**: Cho phép hỏi đáp trên tài liệu mẫu (giới hạn lượt).
-- **Làm Quiz**: Làm được 1 bài quiz demo. Khi nộp bài, hiển thị thông báo rõ ràng: _"⚠️ Kết quả không được lưu vì bạn chưa đăng nhập. [Đăng nhập ngay]"_.
-- **Phân tích / Gợi ý / Lịch sử**: Hiển thị khung Empty State kèm hình minh họa và nút CTA _"Đăng nhập để xem tiến độ cá nhân"_ (không khóa im lặng).
+- **Top Header**: Display the [Log In] and [Sign Up] buttons on the right instead of the avatar.
+- **Dashboard**: Display static sample data.
+- **Materials**: Allow access to only 1–2 sample documents. Hide or disable the buttons for uploading new files and deleting files.
+- **Q&A and AI Summary**: Allow questions and answers based on sample documents, with a limited number of interactions.
+- **Take Quiz**: Allow the user to complete one demo quiz. When the quiz is submitted, display a clear message: _"⚠️ Your result was not saved because you are not logged in. [Log in now]"_.
+- **Analytics / Recommendations / History**: Display an empty-state panel with an illustration and the CTA button _"Log in to view your personal progress"_ (do not silently lock these features).
 
-### Chế độ Đã đăng nhập (`isLoggedIn === true`):
+### Logged-in Mode (`isLoggedIn === true`)
 
-- **Top Header**: Hiển thị Avatar `AT` (An Ton) + Tên người dùng + Nút [Đăng xuất].
-- Mở khóa toàn bộ tính năng: Tải tài liệu cá nhân, Lưu kết quả Quiz tự động, Xem biểu đồ Phân tích ma trận chủ đề yếu và nhận Gợi ý học tập cá nhân hóa.
-
----
-
-## 2. Chi tiết Sửa đổi Giao diện theo Màn hình
-
-### Màn hình 1: Xác thực (Auth)
-
-- Tích hợp Form Auth dạng Tab: **[Đăng nhập]** và **[Đăng ký]**.
-- Tab Đăng ký: Bổ sung trường "Xác nhận mật khẩu" và đổi tên nút Submit thành "Tạo tài khoản".
-- Khi bấm Submit Đăng nhập/Đăng ký -> Đổi `isLoggedIn = true`, lưu `localStorage`, chuyển về Dashboard và đổi Header sang Avatar.
-
-### Màn hình 2: Kho tài liệu (Materials)
-
-- Rút gọn bộ lọc: Chỉ giữ lại **Bộ lọc Trạng thái** (Sẵn sàng / Đang xử lý / Thất bại). Bỏ bộ lọc Môn học và Thẻ.
-
-### Màn hình 4: Quiz AI (Player & Kết quả)
-
-- **Tự động lưu**: Bỏ nút [Lưu kết quả]. Thay bằng nhãn trạng thái tự động giả lập: _"Đang lưu..."_ -> _"Đã lưu"_.
-- **Đa dạng dạng câu hỏi**:
-  - Trắc nghiệm / Đúng-Sai: Sử dụng ô chọn Radio (`<input type="radio">`).
-  - Điền từ: Sử dụng ô nhập Text (`<input type="text">`).
-- **Màn hình Kết quả**: Hiển thị badge **[Bỏ qua]** riêng biệt cho các câu chưa làm, không gộp chung vào số câu "Sai".
-
-### Màn hình 5: Phân tích (Analytics)
-
-- Thay đổi chỉ số: Bỏ "Số tài liệu đã làm chủ", thay bằng **"Số chủ đề có đủ dữ liệu"**.
-- Cảnh báo chủ đề yếu: Chỉ hiển thị thẻ cảnh báo nguy cơ khi chủ đề có lượt làm $\ge 2$ trong `mock-data.js`. Nếu chưa đủ lượt làm, hiển thị banner _"Chưa đủ bằng chứng phân tích"_.
-
-### Màn hình 6: Gợi ý học tập (Recommendations)
-
-- Mô phỏng 2 trạng thái:
-  1. _Có tài liệu liên quan_: Hiển thị chính xác số trang/slide trích dẫn từ `mock-data.js`.
-  2. _Không có tài liệu liên quan_: Hiển thị thông báo _"Bạn chưa có tài liệu về chủ đề này"_ kèm nút CTA _"Tải thêm tài liệu"_.
+- **Top Header**: Display the `AT` avatar (An Ton), the user's name, and a [Log Out] button.
+- Unlock all features: upload personal documents, automatically save quiz results, view analytics charts showing weak topic areas, and receive personalized learning recommendations.
 
 ---
 
-## 3. Bổ sung các Trạng thái Ngoại lệ (UI Edge Cases)
+## 2. Screen-specific UI Changes
 
-Tạo các Modal/Toast thông báo giả lập trong JS cho các trường hợp:
+### Screen 1: Authentication (Auth)
 
-1. **Nội dung không đủ**: Thông báo khi tài liệu quá ngắn không thể tạo Quiz hoặc Tóm tắt.
-2. **Đầu ra AI không hợp lệ**: Hiển thị nút "Thử lại (Retry)" khi AI gặp lỗi phản hồi.
-3. **Truy cập trái phép / Phiên hết hạn**: Tự động chuyển về Chế độ Khách và bật Modal thông báo Đăng nhập lại.
+- Integrate an authentication form with tabs: **[Log In]** and **[Sign Up]**.
+- Sign-up tab: Add a "Confirm Password" field and change the submit button label to "Create Account".
+- When the user submits the Log In or Sign Up form, set `isLoggedIn = true`, save the state in `localStorage`, return to the Dashboard, and change the header to show the avatar.
+
+### Screen 2: Materials Library (Materials)
+
+- Simplify the filters: Keep only the **Status Filter** (Ready / Processing / Failed). Remove the Subject and Tag filters.
+
+### Screen 4: AI Quiz (Player & Results)
+
+- **Automatic saving**: Remove the [Save Result] button. Replace it with a simulated automatic-save status label that changes from _"Saving..."_ to _"Saved"_.
+- **Support different question types**:
+  - Multiple-choice / True-False: Use radio buttons (`<input type="radio">`).
+  - Fill-in-the-blank: Use a text input (`<input type="text">`).
+- **Results screen**: Display a separate **[Skipped]** badge for unanswered questions. Do not include them in the "Incorrect" question count.
+
+### Screen 5: Analytics
+
+- Change the metric: Replace "Number of mastered documents" with **"Number of topics with sufficient data"**.
+- Weak-topic alerts: Display a risk-warning card only when a topic has at least 2 attempts (`>= 2`) in `mock-data.js`. If there are not enough attempts, display the banner _"Not enough evidence for analysis"_.
+
+### Screen 6: Learning Recommendations
+
+- Simulate two states:
+  1. _Relevant documents available_: Display the exact number of cited pages/slides from `mock-data.js`.
+  2. _No relevant documents available_: Display the message _"You don't have any documents about this topic yet"_ with the CTA button _"Upload more documents"_.
 
 ---
 
-## 4. Yêu cầu Đầu ra
+## 3. Additional Exception States (UI Edge Cases)
 
-- Tạo file `chapter-04-ai-for-product-design/prompts/04-auth-and-prototype-updates.prompt.md`.
-- Cập nhật các file HTML/JS/CSS trong `chapter-04-ai-for-product-design/prototype/` đáp ứng đầy đủ các quy tắc trên.
+Create simulated notification modals/toasts in JavaScript for the following cases:
+
+1. **Insufficient content**: Show a notification when a document is too short to generate a quiz or summary.
+2. **Invalid AI output**: Display a "Try Again (Retry)" button when the AI returns an error or an invalid response.
+3. **Unauthorized access / Expired session**: Automatically switch back to Guest Mode and show a modal prompting the user to log in again.
+
+---
+
+## 4. Deliverables
+
+- Create the file `chapter-04-ai-for-product-design/prompts/04-auth-and-prototype-updates.prompt.md`.
+- Update the HTML/JS/CSS files in `chapter-04-ai-for-product-design/prototype/` to fully implement all the rules above.
