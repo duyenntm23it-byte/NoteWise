@@ -1,0 +1,1110 @@
+openapi: 3.1.0
+info:
+  title: NoteWise API
+  version: 1.0.0
+  description: >
+    REST contract for the NoteWise learning application. Protected operations
+    derive resource ownership from the verified JWT subject and do not accept
+    a caller-controlled user_id.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+  - name: Documents
+  - name: Learning
+  - name: Analytics
+  - name: Recommendations
+  - name: History
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      security: []
+      operationId: register
+      summary: Register an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Account created and access token issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /auth/login:
+    post:
+      tags: [Auth]
+      security: []
+      operationId: login
+      summary: Authenticate and issue an access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /me:
+    get:
+      tags: [Auth]
+      operationId: getCurrentUser
+      summary: Get the authenticated user's profile
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /documents:
+    get:
+      tags: [Documents]
+      operationId: listDocuments
+      summary: List the current user's documents
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/DocumentStatus"
+      responses:
+        "200":
+          description: Owner-scoped page of documents
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      tags: [Documents]
+      operationId: uploadDocument
+      summary: Upload a document for asynchronous ingestion
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: PDF, DOCX, or PPTX within the configured size limit
+      responses:
+        "202":
+          description: Document accepted for processing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentAccepted"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "413":
+          $ref: "#/components/responses/FileTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedMedia"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "503":
+          $ref: "#/components/responses/ProcessingUnavailable"
+  /documents/{document_id}:
+    parameters:
+      - $ref: "#/components/parameters/DocumentId"
+    get:
+      tags: [Documents]
+      operationId: getDocument
+      summary: Get an owned document and its lifecycle state
+      responses:
+        "200":
+          description: Document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [Documents]
+      operationId: deleteDocument
+      summary: Begin idempotent deletion and content cleanup
+      responses:
+        "202":
+          description: Deletion accepted; content is unavailable while cleanup runs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentDeletion"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /documents/{document_id}/retry:
+    parameters:
+      - $ref: "#/components/parameters/DocumentId"
+    post:
+      tags: [Documents]
+      operationId: retryDocumentProcessing
+      summary: Retry processing for an owned failed document
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "202":
+          description: Retry job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobAccepted"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /documents/{document_id}/summaries:
+    parameters:
+      - $ref: "#/components/parameters/DocumentId"
+    post:
+      tags: [Learning]
+      operationId: createSummary
+      summary: Queue a summary for an owned ready document
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "202":
+          description: Summary generation accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SummaryAccepted"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "503":
+          $ref: "#/components/responses/ProcessingUnavailable"
+  /summaries/{summary_id}:
+    get:
+      tags: [Learning]
+      operationId: getSummary
+      summary: Get an owned summary and generation state
+      parameters:
+        - name: summary_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Summary"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /documents/{document_id}/questions:
+    parameters:
+      - $ref: "#/components/parameters/DocumentId"
+    post:
+      tags: [Learning]
+      operationId: askDocumentQuestion
+      summary: Ask a question grounded in one owned ready document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionRequest"
+      responses:
+        "200":
+          description: Grounded answer or explicit insufficient-evidence result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "502":
+          $ref: "#/components/responses/AiOutputInvalid"
+        "503":
+          $ref: "#/components/responses/AiUnavailable"
+        "504":
+          $ref: "#/components/responses/AiTimeout"
+  /documents/{document_id}/quizzes:
+    parameters:
+      - $ref: "#/components/parameters/DocumentId"
+    post:
+      tags: [Learning]
+      operationId: createQuiz
+      summary: Queue quiz generation and validation for an owned ready document
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizCreateRequest"
+      responses:
+        "202":
+          description: Quiz generation accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizAccepted"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "503":
+          $ref: "#/components/responses/ProcessingUnavailable"
+  /quizzes/{quiz_id}:
+    get:
+      tags: [Learning]
+      operationId: getQuiz
+      summary: Get a quiz with public question fields only
+      description: The server MUST omit answer_key and grading rubrics.
+      parameters:
+        - name: quiz_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Quiz in a public, answer-key-free representation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quiz"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /quizzes/{quiz_id}/attempts:
+    post:
+      tags: [Learning]
+      operationId: startQuizAttempt
+      summary: Start an owned quiz attempt and return public questions
+      parameters:
+        - name: quiz_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "201":
+          description: Attempt started; answer keys are not included
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttempt"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /quiz-attempts/{attempt_id}:
+    parameters:
+      - name: attempt_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: [Learning]
+      operationId: getQuizAttempt
+      summary: Get an owned attempt without answer keys
+      responses:
+        "200":
+          description: Attempt state and public questions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttempt"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /quiz-attempts/{attempt_id}/submit:
+    post:
+      tags: [Learning]
+      operationId: submitQuizAttempt
+      summary: Submit answers and grade once on the server
+      description: >
+        Repeating the same submission returns the original result. A different
+        payload after submission returns ALREADY_SUBMITTED.
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizSubmitRequest"
+      responses:
+        "200":
+          description: Final graded result; repeat submissions return the same result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizResult"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /analytics/accuracy:
+    get:
+      tags: [Analytics]
+      operationId: getAccuracyAnalytics
+      summary: Get owner-scoped accuracy aggregates
+      parameters:
+        - name: from
+          in: query
+          description: Inclusive ISO 8601 timestamp
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: Exclusive ISO 8601 timestamp
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Accuracy calculated from submitted, non-skipped answers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccuracyAnalytics"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /analytics/weak-topics:
+    get:
+      tags: [Analytics]
+      operationId: getWeakTopics
+      summary: Get topic accuracy with evidence sufficiency
+      responses:
+        "200":
+          description: Weak topic candidates and insufficient-data topics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeakTopicPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /recommendations:
+    get:
+      tags: [Recommendations]
+      operationId: listRecommendations
+      summary: Get personalized owner-scoped learning actions
+      responses:
+        "200":
+          description: Recommendations with reasons and optional source references
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecommendationPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /learning-history:
+    get:
+      tags: [History]
+      operationId: listLearningHistory
+      summary: Get paginated learning activity snapshots
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: event_type
+          in: query
+          schema:
+            type: string
+            enum: [DOCUMENT_UPLOADED, SUMMARY_CREATED, QUESTION_ASKED, QUIZ_SUBMITTED]
+      responses:
+        "200":
+          description: Owner-scoped activity history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LearningHistoryPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    DocumentId:
+      name: document_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: page_size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: >
+        Recommended for retried create/submit requests. Reusing a key with a
+        different request body returns IDEMPOTENCY_CONFLICT.
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+  responses:
+    Unauthorized:
+      description: Missing, invalid, or expired Bearer token
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource does not exist or is not owned by the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Conflict:
+      description: Resource state or idempotency conflict
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ValidationError:
+      description: Request schema validation failed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    RateLimited:
+      description: Per-user or per-IP request limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    FileTooLarge:
+      description: Uploaded file exceeds the configured maximum size
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    UnsupportedMedia:
+      description: Unsupported type or content does not match declared file type
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ProcessingUnavailable:
+      description: Durable processing could not be accepted
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    AiOutputInvalid:
+      description: Provider output failed schema or evidence validation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    AiUnavailable:
+      description: AI provider unavailable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    AiTimeout:
+      description: AI provider exceeded its request deadline
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    RegisterRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 320
+        password:
+          type: string
+          format: password
+          minLength: 12
+          maxLength: 128
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    AuthResponse:
+      type: object
+      required: [access_token, token_type, expires_in, user]
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          const: Bearer
+        expires_in:
+          type: integer
+          const: 900
+        user:
+          $ref: "#/components/schemas/User"
+    User:
+      type: object
+      required: [id, email, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+    DocumentStatus:
+      type: string
+      enum: [PROCESSING, READY, FAILED, DELETING, DELETED]
+    Document:
+      type: object
+      required: [id, filename, status, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        media_type:
+          type: string
+          enum:
+            - application/pdf
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - application/vnd.openxmlformats-officedocument.presentationml.presentation
+        status:
+          $ref: "#/components/schemas/DocumentStatus"
+        failure_code:
+          type: [string, "null"]
+        page_count:
+          type: [integer, "null"]
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DocumentPage:
+      type: object
+      required: [items, page, page_size, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Document"
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total:
+          type: integer
+    DocumentAccepted:
+      type: object
+      required: [document, job_id]
+      properties:
+        document:
+          $ref: "#/components/schemas/Document"
+        job_id:
+          type: string
+          format: uuid
+    DocumentDeletion:
+      type: object
+      required: [document_id, status]
+      properties:
+        document_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [DELETING, DELETED]
+    JobAccepted:
+      type: object
+      required: [job_id, status]
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [QUEUED, RETRY_WAIT]
+    Summary:
+      type: object
+      required: [id, document_id, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [QUEUED, PROCESSING, READY, FAILED, DELETED]
+        content:
+          type: [string, "null"]
+        failure_code:
+          type: [string, "null"]
+        created_at:
+          type: string
+          format: date-time
+    SummaryAccepted:
+      type: object
+      required: [summary, job_id]
+      properties:
+        summary:
+          $ref: "#/components/schemas/Summary"
+        job_id:
+          type: string
+          format: uuid
+    QuestionRequest:
+      type: object
+      additionalProperties: false
+      required: [question]
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 4000
+    Citation:
+      type: object
+      required: [chunk_id, page_number, excerpt]
+      properties:
+        chunk_id:
+          type: string
+          format: uuid
+        page_number:
+          type: [integer, "null"]
+          minimum: 1
+        section:
+          type: [string, "null"]
+        excerpt:
+          type: string
+          maxLength: 1200
+    QuestionResponse:
+      oneOf:
+        - type: object
+          required: [status, answer, citations]
+          properties:
+            status:
+              const: answered
+            answer:
+              type: string
+            citations:
+              type: array
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/Citation"
+        - type: object
+          required: [status, answer, citations, code]
+          properties:
+            status:
+              const: insufficient_evidence
+            answer:
+              type: "null"
+            citations:
+              type: array
+              maxItems: 0
+            code:
+              const: INSUFFICIENT_EVIDENCE
+    QuizCreateRequest:
+      type: object
+      additionalProperties: false
+      required: [question_count, difficulty]
+      properties:
+        topic:
+          type: string
+          maxLength: 200
+        question_count:
+          type: integer
+          minimum: 1
+          maximum: 20
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+    QuizStatus:
+      type: string
+      enum: [QUEUED, PROCESSING, READY, FAILED, DELETED]
+    PublicQuizQuestion:
+      type: object
+      required: [id, position, question, question_type, options, citation]
+      properties:
+        id:
+          type: string
+          format: uuid
+        position:
+          type: integer
+          minimum: 1
+        question:
+          type: string
+        question_type:
+          type: string
+          enum: [multiple_choice, true_false, fill_blank]
+        options:
+          type: array
+          items:
+            type: string
+        citation:
+          $ref: "#/components/schemas/Citation"
+    Quiz:
+      type: object
+      required: [id, title, status, questions]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        status:
+          $ref: "#/components/schemas/QuizStatus"
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicQuizQuestion"
+    QuizAccepted:
+      type: object
+      required: [quiz_id, status, job_id]
+      properties:
+        quiz_id:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/QuizStatus"
+        job_id:
+          type: string
+          format: uuid
+    QuizAttempt:
+      type: object
+      required: [id, quiz_id, status, questions]
+      properties:
+        id:
+          type: string
+          format: uuid
+        quiz_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [IN_PROGRESS, SUBMITTED]
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicQuizQuestion"
+        result:
+          oneOf:
+            - $ref: "#/components/schemas/QuizResult"
+            - type: "null"
+    QuizSubmitRequest:
+      type: object
+      additionalProperties: false
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [question_id, answer]
+            properties:
+              question_id:
+                type: string
+                format: uuid
+              answer:
+                oneOf:
+                  - type: string
+                  - type: integer
+          description: >
+            Each question_id must belong to this attempt's quiz and may appear
+            at most once. Omitted questions are recorded as skipped.
+    QuizResult:
+      type: object
+      required:
+        - attempt_id
+        - score
+        - correct_count
+        - answered_count
+        - skipped_count
+        - submitted_at
+      properties:
+        attempt_id:
+          type: string
+          format: uuid
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+        correct_count:
+          type: integer
+          minimum: 0
+        answered_count:
+          type: integer
+          minimum: 0
+        skipped_count:
+          type: integer
+          minimum: 0
+        submitted_at:
+          type: string
+          format: date-time
+        feedback:
+          type: array
+          items:
+            type: object
+            required: [question_id, is_correct]
+            properties:
+              question_id:
+                type: string
+                format: uuid
+              is_correct:
+                type: boolean
+              explanation:
+                type: string
+              citation:
+                $ref: "#/components/schemas/Citation"
+    AccuracyAnalytics:
+      type: object
+      required: [accuracy, correct_count, answered_count, skipped_count]
+      properties:
+        accuracy:
+          type: [number, "null"]
+          minimum: 0
+          maximum: 100
+        correct_count:
+          type: integer
+        answered_count:
+          type: integer
+        skipped_count:
+          type: integer
+    WeakTopic:
+      type: object
+      required: [topic, accuracy, attempts, answered_count, sufficient_data]
+      properties:
+        topic:
+          type: string
+        accuracy:
+          type: [number, "null"]
+          minimum: 0
+          maximum: 100
+        attempts:
+          type: integer
+          minimum: 0
+        answered_count:
+          type: integer
+          minimum: 0
+        sufficient_data:
+          type: boolean
+        is_weak:
+          type: boolean
+        reason:
+          type: [string, "null"]
+    WeakTopicPage:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeakTopic"
+    Recommendation:
+      type: object
+      required: [id, topic, action, reason, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        topic:
+          type: string
+        action:
+          type: string
+        reason:
+          type: string
+        document_id:
+          type: [string, "null"]
+          format: uuid
+        page_start:
+          type: [integer, "null"]
+        page_end:
+          type: [integer, "null"]
+        created_at:
+          type: string
+          format: date-time
+    RecommendationPage:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Recommendation"
+    LearningHistoryItem:
+      type: object
+      required: [id, event_type, occurred_at, details]
+      properties:
+        id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+          enum: [DOCUMENT_UPLOADED, SUMMARY_CREATED, QUESTION_ASKED, QUIZ_SUBMITTED]
+        document_id:
+          type: [string, "null"]
+          format: uuid
+        document_title:
+          type: [string, "null"]
+          description: Snapshot remains available after document-content deletion.
+        occurred_at:
+          type: string
+          format: date-time
+        details:
+          type: object
+          additionalProperties: true
+          description: Display-safe snapshot; must not include document text or answer keys.
+    LearningHistoryPage:
+      type: object
+      required: [items, page, page_size, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/LearningHistoryItem"
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total:
+          type: integer
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, request_id]
+          properties:
+            code:
+              type: string
+              enum:
+                - INVALID_REQUEST
+                - UNAUTHENTICATED
+                - TOKEN_EXPIRED
+                - TOKEN_INVALID
+                - NOT_FOUND
+                - STATE_CONFLICT
+                - ALREADY_SUBMITTED
+                - IDEMPOTENCY_CONFLICT
+                - FILE_TOO_LARGE
+                - UNSUPPORTED_FILE_TYPE
+                - VALIDATION_ERROR
+                - RATE_LIMITED
+                - AI_OUTPUT_INVALID
+                - AI_VALIDATION_FAILED
+                - AI_PROVIDER_UNAVAILABLE
+                - PROCESSING_UNAVAILABLE
+                - AI_TIMEOUT
+            message:
+              type: string
+            details:
+              type: object
+              additionalProperties: true
+            request_id:
+              type: string
+              format: uuid

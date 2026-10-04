@@ -1,0 +1,16 @@
+flowchart LR
+  learner["Người học"]
+  browser["Browser"]
+  frontend["NoteWise Web<br/>Next.js + TypeScript + Tailwind<br/>Static Export / SPA"]
+  api["NoteWise API<br/>FastAPI Modular Monolith<br/>API + DB-backed job loop"]
+  db[("PostgreSQL<br/>pgvector")]
+  files[("Persistent Docker volume<br/>PDF / DOCX / PPTX")]
+  ai["AI Provider<br/>Embeddings / LLM"]
+
+  learner --> browser
+  browser --> frontend
+  frontend -->|"HTTPS REST + JWT Bearer"| api
+  api -->|"SQL transactions, owner-scoped queries,<br/>vector retrieval and job leases"| db
+  api -->|"Generated storage keys;<br/>read/write/delete"| files
+  api -->|"Embedding and generation requests<br/>with bounded timeouts"| ai
+  api -->|"JSON, citations, explicit errors,<br/>resource/job states"| frontend
