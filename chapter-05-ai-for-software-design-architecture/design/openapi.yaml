@@ -160,6 +160,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
     delete:
       tags: [Documents]
       operationId: deleteDocument
@@ -312,6 +314,8 @@ paths:
           $ref: "#/components/responses/Conflict"
         "422":
           $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "503":
           $ref: "#/components/responses/ProcessingUnavailable"
   /quizzes/{quiz_id}:
@@ -338,6 +342,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /quizzes/{quiz_id}/attempts:
     post:
       tags: [Learning]
@@ -386,6 +392,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /quiz-attempts/{attempt_id}/submit:
     post:
       tags: [Learning]
@@ -444,6 +452,22 @@ paths:
                 $ref: "#/components/schemas/AccuracyAnalytics"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /analytics/overview:
+    get:
+      tags: [Analytics]
+      operationId: getAnalyticsOverview
+      summary: Get owner-scoped learning overview metrics
+      responses:
+        "200":
+          description: Mean submitted quiz score and owner-scoped counts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsOverview"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /analytics/weak-topics:
     get:
       tags: [Analytics]
@@ -494,6 +518,34 @@ paths:
                 $ref: "#/components/schemas/LearningHistoryPage"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /documents/{document_id}/chunks/{chunk_id}:
+    get:
+      tags: [Documents]
+      operationId: getDocumentChunk
+      summary: Get an owned source passage for a document
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+        - name: chunk_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Owned document passage
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentChunk"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
 components:
   securitySchemes:
     bearerAuth:
@@ -810,15 +862,22 @@ components:
     QuizCreateRequest:
       type: object
       additionalProperties: false
-      required: [question_count, difficulty]
+      required: [question_count, question_types, difficulty]
       properties:
         topic:
-          type: string
+          type: [string, "null"]
           maxLength: 200
         question_count:
           type: integer
-          minimum: 1
+          minimum: 5
           maximum: 20
+        question_types:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            enum: [multiple_choice, true_false, fill_blank]
         difficulty:
           type: string
           enum: [easy, medium, hard]
@@ -861,6 +920,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PublicQuizQuestion"
+        failure_code:
+          type: [string, "null"]
     QuizAccepted:
       type: object
       required: [quiz_id, status, job_id]
@@ -925,6 +986,7 @@ components:
         - answered_count
         - skipped_count
         - submitted_at
+        - feedback
       properties:
         attempt_id:
           type: string
@@ -933,6 +995,9 @@ components:
           type: number
           minimum: 0
           maximum: 100
+          description: >
+            Correct answers divided by total quiz questions (including skipped
+            questions), multiplied by 100 and rounded to two decimal places.
         correct_count:
           type: integer
           minimum: 0
@@ -960,6 +1025,19 @@ components:
                 type: string
               citation:
                 $ref: "#/components/schemas/Citation"
+              submitted_answer:
+                oneOf:
+                  - type: string
+                  - type: integer
+                  - type: "null"
+              correct_answer:
+                oneOf:
+                  - type: string
+                  - type: integer
+                  - type: array
+                    items:
+                      type: string
+                  - type: "null"
     AccuracyAnalytics:
       type: object
       required: [accuracy, correct_count, answered_count, skipped_count]
@@ -974,9 +1052,25 @@ components:
           type: integer
         skipped_count:
           type: integer
+    AnalyticsOverview:
+      type: object
+      required: [average_score, document_count, completed_quiz_count]
+      properties:
+        average_score:
+          type: [number, "null"]
+          minimum: 0
+          maximum: 100
+          description: Arithmetic mean of scores on submitted quiz attempts.
+        document_count:
+          type: integer
+          minimum: 0
+        completed_quiz_count:
+          type: integer
+          minimum: 0
+          description: Count of submitted attempts, including retakes.
     WeakTopic:
       type: object
-      required: [topic, accuracy, attempts, answered_count, sufficient_data]
+      required: [topic, accuracy, attempts, answered_count, skipped_count, sufficient_data, is_weak, reason]
       properties:
         topic:
           type: string
@@ -988,6 +1082,9 @@ components:
           type: integer
           minimum: 0
         answered_count:
+          type: integer
+          minimum: 0
+        skipped_count:
           type: integer
           minimum: 0
         sufficient_data:
@@ -1006,7 +1103,8 @@ components:
             $ref: "#/components/schemas/WeakTopic"
     Recommendation:
       type: object
-      required: [id, topic, action, reason, created_at]
+      required:
+        [id, topic, action, reason, document_id, chunk_id, page_start, page_end, created_at]
       properties:
         id:
           type: string
@@ -1018,6 +1116,9 @@ components:
         reason:
           type: string
         document_id:
+          type: [string, "null"]
+          format: uuid
+        chunk_id:
           type: [string, "null"]
           format: uuid
         page_start:
@@ -1037,7 +1138,8 @@ components:
             $ref: "#/components/schemas/Recommendation"
     LearningHistoryItem:
       type: object
-      required: [id, event_type, occurred_at, details]
+      required:
+        [id, event_type, document_id, document_title, occurred_at, details]
       properties:
         id:
           type: string
@@ -1072,6 +1174,22 @@ components:
           type: integer
         total:
           type: integer
+    DocumentChunk:
+      type: object
+      required: [id, document_id, content, page_number, section]
+      properties:
+        id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        page_number:
+          type: [integer, "null"]
+        section:
+          type: [string, "null"]
     ErrorResponse:
       type: object
       required: [error]

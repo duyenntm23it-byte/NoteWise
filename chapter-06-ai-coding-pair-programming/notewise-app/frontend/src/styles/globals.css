@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@config "../../tailwind.config.js";
+
+:root {
+  color-scheme: light;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f7f8fa;
+  color: #17212b;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
