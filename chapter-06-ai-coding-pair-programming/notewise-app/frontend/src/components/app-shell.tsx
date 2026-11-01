@@ -8,8 +8,9 @@ import { useAuth } from "@/components/auth-provider";
 
 const navigation = [
   { label: "Overview", href: "/", icon: "⌂" },
-  { label: "Material Hub", href: "/materials", icon: "▤" },
-  { label: "AI Quiz Player", href: "/quiz", icon: "✳" },
+  { label: "Material Hub", href: "/dashboard/materials", icon: "▤" },
+  { label: "Document Q&A", href: "/dashboard/chat", icon: "✳" },
+  { label: "AI Quiz Player", href: "/dashboard/quiz", icon: "✳" },
   { label: "Analytics", href: "/analytics", icon: "▥" },
 ];
 
@@ -31,7 +32,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         </p>
         <nav aria-label="Main navigation" className="flex gap-2 overflow-x-auto md:flex-col">
           {navigation.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive =
+              pathname === item.href ||
+              ((item.href === "/dashboard/materials" ||
+                item.href === "/dashboard/chat" ||
+                item.href === "/dashboard/quiz") &&
+                pathname.startsWith(item.href));
             return (
               <Link
                 key={item.label}

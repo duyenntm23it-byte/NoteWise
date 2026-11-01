@@ -7,6 +7,13 @@ import type { ReactNode } from "react";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const TOKEN_STORAGE_KEY = "notewise_access_token";
 
+export function getStoredAccessToken(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  return window.sessionStorage.getItem(TOKEN_STORAGE_KEY);
+}
+
 export interface AuthUser {
   id: string;
   email: string;

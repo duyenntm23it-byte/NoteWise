@@ -11,7 +11,7 @@ const destinations = [
   {
     title: "Material Hub",
     description: "Organize learning materials and ask questions grounded in your notes.",
-    href: "/materials",
+    href: "/dashboard/materials",
     label: "Explore your materials",
     icon: "▤",
     style: "bg-indigo-100 text-indigo-700",
