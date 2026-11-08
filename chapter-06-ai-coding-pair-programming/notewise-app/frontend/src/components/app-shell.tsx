@@ -11,7 +11,7 @@ const navigation = [
   { label: "Material Hub", href: "/dashboard/materials", icon: "▤" },
   { label: "Document Q&A", href: "/dashboard/chat", icon: "✳" },
   { label: "AI Quiz Player", href: "/dashboard/quiz", icon: "✳" },
-  { label: "Analytics", href: "/analytics", icon: "▥" },
+  { label: "Analytics", href: "/dashboard/analytics", icon: "▥" },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -36,7 +36,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               pathname === item.href ||
               ((item.href === "/dashboard/materials" ||
                 item.href === "/dashboard/chat" ||
-                item.href === "/dashboard/quiz") &&
+                item.href === "/dashboard/quiz" ||
+                item.href === "/dashboard/analytics") &&
                 pathname.startsWith(item.href));
             return (
               <Link

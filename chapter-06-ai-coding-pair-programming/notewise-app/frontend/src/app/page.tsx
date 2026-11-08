@@ -27,7 +27,7 @@ const destinations = [
   {
     title: "Analytics Dashboard",
     description: "Review learning progress and discover topics that need more attention.",
-    href: "/analytics",
+    href: "/dashboard/analytics",
     label: "Review your progress",
     icon: "▥",
     style: "bg-emerald-100 text-emerald-700",

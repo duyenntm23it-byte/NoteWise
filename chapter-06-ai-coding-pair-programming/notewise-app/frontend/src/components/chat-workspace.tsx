@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
 import { getStoredAccessToken, useAuth } from "@/components/auth-provider";
@@ -91,6 +91,9 @@ function isAnswer(value: unknown): value is { answer: string; citations: Citatio
 
 export function ChatWorkspace() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedDocumentId = searchParams.get("document");
+  const requestedQuestion = searchParams.get("q");
   const { user, isLoading, sessionError } = useAuth();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
@@ -136,6 +139,9 @@ export function ChatWorkspace() {
           payload.filter(isDocumentItem).filter((document) => document.status === "ready")
             .map((document) => document.id),
         );
+        if (requestedDocumentId && readyIds.has(requestedDocumentId)) {
+          return [requestedDocumentId];
+        }
         const stillReady = current.filter((id) => readyIds.has(id));
         return stillReady.length > 0
           ? stillReady
@@ -149,7 +155,13 @@ export function ChatWorkspace() {
     } finally {
       setIsLoadingDocuments(false);
     }
-  }, []);
+  }, [requestedDocumentId]);
+
+  useEffect(() => {
+    if (requestedQuestion) {
+      setQuestion(requestedQuestion.slice(0, 1000));
+    }
+  }, [requestedQuestion]);
 
   useEffect(() => {
     if (user) {

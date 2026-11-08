@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { MaterialsHub } from "@/components/materials-hub";
 
 export const metadata: Metadata = {
-  title: "Material Hub | NoteWise",
+  title: "Material Hub",
   description: "Upload and manage your NoteWise learning materials.",
 };
 

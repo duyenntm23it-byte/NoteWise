@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { QuizWorkspace } from "@/components/quiz-workspace";
 
 export const metadata: Metadata = {
-  title: "AI Quiz Player | NoteWise",
+  title: "AI Quiz Player",
   description: "Generate and play quizzes grounded in your NoteWise learning materials.",
 };
 
